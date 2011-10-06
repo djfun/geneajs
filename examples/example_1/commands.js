@@ -1,0 +1,1 @@
+document.write(ChartHelper.render(myTree, 4));
