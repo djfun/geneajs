@@ -1,0 +1,13 @@
+.data_node {
+  position: absolute;
+  background-color:lightblue;
+  border:1px blue solid;
+  height: 100px;
+  width: 100px; 
+}
+.line {
+  position: absolute;
+  background-color:gray;
+  height:1px;
+  width:1px;
+}
