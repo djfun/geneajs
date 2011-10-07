@@ -7,11 +7,12 @@ What can it do?
 ---------------
 
 It displays
-* the reference person
-* its siblings
-* all ancestors
-* the siblings of father and mother and their descendants
-* the descendants of the reference person
+
+*  the reference person
+*  its siblings
+*  all ancestors
+*  the siblings of father and mother and their descendants
+*  the descendants of the reference person
 
 Todo
 ----
