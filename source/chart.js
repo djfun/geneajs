@@ -216,8 +216,8 @@ ChartHelper = {
     return returnData;
   },
   normalize: function(inData, inLines) {
-    var mostNegativeLeft = 0;
-    var mostNegativeTop = 0;
+    var mostNegativeLeft = 1000;
+    var mostNegativeTop = 1000;
     var returnData = [];
     var returnLines = [];
     for (var i = 0; i<inData.length; i++) {
@@ -303,14 +303,12 @@ ChartHelper = {
         
         var currentChild = children[children.length -1];
         
-        maxWidth+= currentChild.maxWidth;
-        
-        var width = (i == 0) ? 0 : children[children.length - 2].maxWidth;
-        
         this.preOrder(currentChild, function(inElement) {
-          inElement.left+=110*i*width;
+          inElement.left+=110*maxWidth;
           inElement.top+=140;
         });
+        
+        maxWidth+= currentChild.maxWidth;
       }
       return {left: 0, top: 0, maxWidth: maxWidth, data: inPedigree.data, children: children};
     } else {
