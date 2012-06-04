@@ -15,6 +15,8 @@
 */
 
 ChartHelper = {
+  height: 120,
+  width: 120,
   render: function(inAncestors, inDepth) {
     var ancestors = {
       "0": [inAncestors]
@@ -47,19 +49,19 @@ ChartHelper = {
       var inv_i = inDepth - i;
       for (j = 0; j < ancestors[i].length; j++) {
         if (ancestors[i][j].type !== "empty") {
-          var len = Math.pow(2, inv_i - 1) * 110;
-          left = (inv_i === 0) ? 0 + j * 110:
-            Math.pow(2, inv_i - 1) * 110 - 55 + Math.pow(2, inv_i) * 110 * j;
-          data[data.length] = {left: left, top: -i * 140, data: ancestors[i][j].data};
-          lines[lines.length] = {left: left + 50, top: -i * 140 + 102, data: {orientation: "vertical", len: 20}};
+          var len = Math.pow(2, inv_i - 1) * (ChartHelper.width + 10);
+          left = (inv_i === 0) ? 0 + j * (ChartHelper.width + 10):
+            Math.pow(2, inv_i - 1) * (ChartHelper.width + 10) - ((ChartHelper.width + 10) / 2) + Math.pow(2, inv_i) * (ChartHelper.width + 10) * j;
+          data[data.length] = {left: left, top: -i * (ChartHelper.height + 40), data: ancestors[i][j].data};
+          lines[lines.length] = {left: left + (ChartHelper.width / 2), top: -i * (ChartHelper.height + 40) + (ChartHelper.height + 2), data: {orientation: "vertical", len: 20}};
           if (j % 2 === 0) {
-            lines[lines.length] = {left: left + 50, top: -i * 140 + 122, data: {orientation: "horizontal", len: len}};
+            lines[lines.length] = {left: left + (ChartHelper.width / 2), top: -i * (ChartHelper.height + 40) + (ChartHelper.height + 22), data: {orientation: "horizontal", len: len}};
           } else {
-            lines[lines.length] = {left: left + 50 - len, top: -i * 140 + 122, data: {orientation: "horizontal", len: len}};
+            lines[lines.length] = {left: left + (ChartHelper.width / 2) - len, top: -i * (ChartHelper.height + 40) + (ChartHelper.height + 22), data: {orientation: "horizontal", len: len}};
           }
           if (i !== inDepth) {
             if (ancestors[i][j].father || ancestors[i][j].mother) {
-              lines[lines.length] = {left: left + 50, top: -i * 140 - 18, data: {orientation: "vertical", len: 18}};
+              lines[lines.length] = {left: left + (ChartHelper.width / 2), top: -i * (ChartHelper.height + 40) - 18, data: {orientation: "vertical", len: 18}};
             }
           }
         }
@@ -69,7 +71,7 @@ ChartHelper = {
     var ped_data = pedigree.data;
     var ped_lines = pedigree.lines;
     
-    left = Math.pow(2, inDepth - 1) * 110 - 55 + Math.pow(2, inDepth) * 110 * 0;
+    left = Math.pow(2, inDepth - 1) * (ChartHelper.width + 10) - ((ChartHelper.width + 10) / 2) + Math.pow(2, inDepth) * (ChartHelper.width + 10) * 0;
     for (i = 0; i<ped_data.length; i++) {
       ped_data[i].left+= left;
       ped_data[i].top+= 0;
@@ -78,13 +80,13 @@ ChartHelper = {
       ped_lines[i].left+= left;
       ped_lines[i].top+= 0;
     }
-    lines[lines.length] = {left: left + 50, top: -18, data: {orientation: "vertical", len: 18}};
+    lines[lines.length] = {left: left + (ChartHelper.width / 2), top: -18, data: {orientation: "vertical", len: 18}};
     
     data = data.concat(ped_data);
     lines = lines.concat(ped_lines);
-    
 
-    var right_space = (110*pedigree.data[0].maxWidth)/2;
+
+    var right_space = ((ChartHelper.width + 10)*pedigree.data[0].maxWidth)/2;
     // siblings1
     if (inAncestors.siblings1) {
       
@@ -97,12 +99,12 @@ ChartHelper = {
     
     // father_siblings
     if (inAncestors.father_siblings) {
-      var father_left = Math.pow(2, inDepth - 2) * 110 - 55 + Math.pow(2, inDepth - 1) * 110 * 0;
+      var father_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + 10) - ((ChartHelper.width + 10) / 2) + Math.pow(2, inDepth - 1) * (ChartHelper.width + 10) * 0;
       right_space-=(left - father_left);
-      if (right_space < 55) {
-        right_space = 55;
+      if (right_space < ((ChartHelper.width + 10) / 2)) {
+        right_space = (ChartHelper.width + 10) / 2;
       }
-      returnObject = this.renderPart(inAncestors.father_siblings, father_left, -140, right_space, 'right');
+      returnObject = this.renderPart(inAncestors.father_siblings, father_left, -(ChartHelper.height + 40), right_space, 'right');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -111,7 +113,7 @@ ChartHelper = {
     }
     
     // now the other side
-    var left_space = (110*pedigree.data[0].maxWidth)/2;
+    var left_space = ((ChartHelper.width + 10)*pedigree.data[0].maxWidth)/2;
     
     //siblings2
     if (inAncestors.siblings2) {
@@ -124,12 +126,12 @@ ChartHelper = {
     
     // mother_siblings
     if (inAncestors.mother_siblings) {
-      var mother_left = Math.pow(2, inDepth - 2) * 110 - 55 + Math.pow(2, inDepth - 1) * 110 * 1;
+      var mother_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + 10) - ((ChartHelper.width + 10) / 2) + Math.pow(2, inDepth - 1) * (ChartHelper.width + 10) * 1;
       left_space-=(mother_left - left);
-      if (left_space < 55) {
-        left_space = 55;
+      if (left_space < ((ChartHelper.width + 10) / 2)) {
+        left_space = (ChartHelper.width + 10) / 2;
       }
-      returnObject = this.renderPart(inAncestors.mother_siblings, mother_left, -140, left_space, 'left');
+      returnObject = this.renderPart(inAncestors.mother_siblings, mother_left, -(ChartHelper.height + 40), left_space, 'left');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -145,9 +147,9 @@ ChartHelper = {
       var ped_data = ped.data;
       var ped_lines = ped.lines;
       if (direction === 'left') {
-        new_left = inLeft + inSpace + ((110 * ped.data[0].maxWidth) / 2);
+        new_left = inLeft + inSpace + (((ChartHelper.width + 10) * ped.data[0].maxWidth) / 2);
       } else if (direction === 'right') {
-        new_left = inLeft - inSpace - ((110 * ped.data[0].maxWidth) / 2);
+        new_left = inLeft - inSpace - (((ChartHelper.width + 10) * ped.data[0].maxWidth) / 2);
       }
       for (i = 0; i<ped_data.length; i++) {
         ped_data[i].left+= new_left;
@@ -158,12 +160,12 @@ ChartHelper = {
         ped_lines[i].left+= new_left;
         ped_lines[i].top+= inTop;
       }
-      inSpace+= 110*ped.data[0].maxWidth;
+      inSpace+= (ChartHelper.width + 10)*ped.data[0].maxWidth;
 
       var len = direction === 'left' ? new_left - inLeft : inLeft - new_left;
-      var hor_line_left = direction === 'left' ? inLeft + 50 : new_left + 50;
+      var hor_line_left = direction === 'left' ? inLeft + (ChartHelper.width / 2) : new_left + (ChartHelper.width / 2);
       
-      ped_lines[ped_lines.length] = {left: new_left + 50, top: -18+inTop, data: {orientation: "vertical", len: 18}};
+      ped_lines[ped_lines.length] = {left: new_left + (ChartHelper.width / 2), top: -18+inTop, data: {orientation: "vertical", len: 18}};
       ped_lines[ped_lines.length] = {left: hor_line_left, top: -18+inTop, data: {orientation: "horizontal", len: len}};
       
       return_data = return_data.concat(ped_data);
@@ -232,7 +234,7 @@ ChartHelper = {
     
     this.preOrder(pedigree, function(inElement) {
       // center the element
-      inElement.left+=(110*inElement.maxWidth)/2;
+      inElement.left+=((ChartHelper.width + 10)*inElement.maxWidth)/2;
       data[data.length] = inElement;
     });
 
@@ -243,17 +245,17 @@ ChartHelper = {
     this.preOrder(pedigree, function(inElement) {
       // and add lines
       if (inElement.children) {
-        lines[lines.length] = {left: inElement.left + 50, top: inElement.top + 102, data: {orientation: "vertical", len: 20}};
+        lines[lines.length] = {left: inElement.left + (ChartHelper.width / 2), top: inElement.top + ChartHelper.height + 2, data: {orientation: "vertical", len: 20}};
         var children = inElement.children;
         for (var i = 0; i<children.length; i++) {
           var child = children[i];
-          lines[lines.length] = {left: child.left + 50, top: child.top - 18, data: {orientation: "vertical", len: 18}};
+          lines[lines.length] = {left: child.left + (ChartHelper.width / 2), top: child.top - 18, data: {orientation: "vertical", len: 18}};
           if (i === 0) {
-            left1 = child.left + 50;
+            left1 = child.left + (ChartHelper.width / 2);
             top = child.top - 18;
           }
           if (i === children.length - 1) {
-            len = (child.left + 50) - left1;
+            len = (child.left + (ChartHelper.width / 2)) - left1;
           }
         }
         lines[lines.length] = {left: left1, top: top, data: {orientation: "horizontal", len: len}};
@@ -286,8 +288,8 @@ ChartHelper = {
         var currentChild = children[children.length -1];
         
         this.preOrder(currentChild, function(inElement) {
-          inElement.left+=110*maxWidth;
-          inElement.top+=140;
+          inElement.left+= (ChartHelper.width + 10) * maxWidth;
+          inElement.top+= ChartHelper.height + 40;
         });
         
         maxWidth+= currentChild.maxWidth;
