@@ -19,9 +19,13 @@ ChartHelper = {
     var ancestors = {
       "0": [inAncestors]
     };
-    for (var i = 1; i<= inDepth; i++) {
+    var i;
+    var j;
+    var left;
+    var new_left;
+    for (i = 1; i<= inDepth; i++) {
       var levelAncestors = [];
-      for (var j = 0; j<ancestors[i-1].length; j++) {
+      for (j = 0; j<ancestors[i-1].length; j++) {
         if (ancestors[i-1][j].father) {
           levelAncestors[levelAncestors.length] = ancestors[i-1][j].father;
         } else {
@@ -38,21 +42,21 @@ ChartHelper = {
     
     var data = [];
     var lines = [];
-    for (var i = inDepth; i>0; i--) {
+    for (i = inDepth; i>0; i--) {
       var inv_i = inDepth - i;
-      for (var j = 0; j < ancestors[i].length; j++) {
-        if (ancestors[i][j].type != "empty") {
+      for (j = 0; j < ancestors[i].length; j++) {
+        if (ancestors[i][j].type !== "empty") {
           var len = Math.pow(2, inv_i - 1) * 110;
-          var left = (inv_i == 0) ? 0 + j * 110:
+          left = (inv_i === 0) ? 0 + j * 110:
             Math.pow(2, inv_i - 1) * 110 - 55 + Math.pow(2, inv_i) * 110 * j;
           data[data.length] = {left: left, top: -i * 140, data: ancestors[i][j].data};
           lines[lines.length] = {left: left + 50, top: -i * 140 + 102, data: {orientation: "vertical", len: 20}};
-          if (j % 2 == 0) {
+          if (j % 2 === 0) {
             lines[lines.length] = {left: left + 50, top: -i * 140 + 122, data: {orientation: "horizontal", len: len}};
           } else {
             lines[lines.length] = {left: left + 50 - len, top: -i * 140 + 122, data: {orientation: "horizontal", len: len}};
           }
-          if (i != inDepth) {
+          if (i !== inDepth) {
             if (ancestors[i][j].father || ancestors[i][j].mother) {
               lines[lines.length] = {left: left + 50, top: -i * 140 - 18, data: {orientation: "vertical", len: 18}};
             }
@@ -64,12 +68,12 @@ ChartHelper = {
     var ped_data = pedigree.data;
     var ped_lines = pedigree.lines;
     
-    var left = Math.pow(2, inDepth - 1) * 110 - 55 + Math.pow(2, inDepth) * 110 * 0;
-    for (var i = 0; i<ped_data.length; i++) {
+    left = Math.pow(2, inDepth - 1) * 110 - 55 + Math.pow(2, inDepth) * 110 * 0;
+    for (i = 0; i<ped_data.length; i++) {
       ped_data[i].left+= left;
       ped_data[i].top+= 0;
     }
-    for (var i = 0; i<ped_lines.length; i++) {
+    for (i = 0; i<ped_lines.length; i++) {
       ped_lines[i].left+= left;
       ped_lines[i].top+= 0;
     }
@@ -82,17 +86,17 @@ ChartHelper = {
     // siblings1
     if (inAncestors.siblings1) {
       
-      for (var j = 0; j<inAncestors.siblings1.length; j++) {
+      for (j = 0; j<inAncestors.siblings1.length; j++) {
         
         var siblings1_ped = this.renderPedigree(inAncestors.siblings1[j]);
         var sib1_ped_data = siblings1_ped.data;
         var sib1_ped_lines = siblings1_ped.lines;
-        var new_left = left - right_space - ((110*siblings1_ped.data[0].maxWidth)/2)
-        for (var i = 0; i<sib1_ped_data.length; i++) {
+        new_left = left - right_space - ((110*siblings1_ped.data[0].maxWidth)/2);
+        for (i = 0; i<sib1_ped_data.length; i++) {
           sib1_ped_data[i].left+= new_left;
           sib1_ped_data[i].top+= 0;
         }
-        for (var i = 0; i<sib1_ped_lines.length; i++) {
+        for (i = 0; i<sib1_ped_lines.length; i++) {
           sib1_ped_lines[i].left+= new_left;
           sib1_ped_lines[i].top+= 0;
         }
@@ -113,16 +117,16 @@ ChartHelper = {
       if (right_space < 55) {
         right_space = 55;
       }
-      for (var j = 0; j<inAncestors.father_siblings.length; j++) {
+      for (j = 0; j<inAncestors.father_siblings.length; j++) {
         var father_sib_ped = this.renderPedigree(inAncestors.father_siblings[j]);
         var father_sib_ped_data = father_sib_ped.data;
         var father_sib_ped_lines = father_sib_ped.lines;
-        var new_left = father_left - right_space - ((110*father_sib_ped.data[0].maxWidth)/2);
-        for (var i = 0; i<father_sib_ped_data.length; i++) {
+        new_left = father_left - right_space - ((110*father_sib_ped.data[0].maxWidth)/2);
+        for (i = 0; i<father_sib_ped_data.length; i++) {
           father_sib_ped_data[i].left+= new_left;
           father_sib_ped_data[i].top-= 140;
         }
-        for (var i = 0; i<father_sib_ped_lines.length; i++) {
+        for (i = 0; i<father_sib_ped_lines.length; i++) {
           father_sib_ped_lines[i].left+= new_left;
           father_sib_ped_lines[i].top-= 140;
         }
@@ -142,17 +146,17 @@ ChartHelper = {
     //siblings2
     if (inAncestors.siblings2) {
       
-      for (var j = 0; j<inAncestors.siblings2.length; j++) {
+      for (j = 0; j<inAncestors.siblings2.length; j++) {
         
         var siblings2_ped = this.renderPedigree(inAncestors.siblings2[j]);
         var sib2_ped_data = siblings2_ped.data;
         var sib2_ped_lines = siblings2_ped.lines;
-        var new_left = left + left_space + ((110*siblings2_ped.data[0].maxWidth)/2)
-        for (var i = 0; i<sib2_ped_data.length; i++) {
+        new_left = left + left_space + ((110*siblings2_ped.data[0].maxWidth)/2);
+        for (i = 0; i<sib2_ped_data.length; i++) {
           sib2_ped_data[i].left+= new_left;
           sib2_ped_data[i].top+= 0;
         }
-        for (var i = 0; i<sib2_ped_lines.length; i++) {
+        for (i = 0; i<sib2_ped_lines.length; i++) {
           sib2_ped_lines[i].left+= new_left;
           sib2_ped_lines[i].top+= 0;
         }
@@ -173,16 +177,16 @@ ChartHelper = {
       if (left_space < 55) {
         left_space = 55;
       }
-      for (var j = 0; j<inAncestors.mother_siblings.length; j++) {
+      for (j = 0; j<inAncestors.mother_siblings.length; j++) {
         var mother_sib_ped = this.renderPedigree(inAncestors.mother_siblings[j]);
         var mother_sib_ped_data = mother_sib_ped.data;
         var mother_sib_ped_lines = mother_sib_ped.lines;
-        var new_left = mother_left + left_space + ((110*mother_sib_ped.data[0].maxWidth)/2);
-        for (var i = 0; i<mother_sib_ped_data.length; i++) {
+        new_left = mother_left + left_space + ((110*mother_sib_ped.data[0].maxWidth)/2);
+        for (i = 0; i<mother_sib_ped_data.length; i++) {
           mother_sib_ped_data[i].left+= new_left;
           mother_sib_ped_data[i].top-= 140;
         }
-        for (var i = 0; i<mother_sib_ped_lines.length; i++) {
+        for (i = 0; i<mother_sib_ped_lines.length; i++) {
           mother_sib_ped_lines[i].left+= new_left;
           mother_sib_ped_lines[i].top-= 140;
         }
@@ -204,13 +208,14 @@ ChartHelper = {
     var d = this.normalize(inData, inLines);
     var data = d.data;
     var lines = d.lines;
+    var value;
     for (var i = 0; i<data.length; i++) {
-      var value = data[i];
+      value = data[i];
       returnData+="<div class='data_node' style='top:" + value.top + "px; left:" + value.left + "px;'>" + value.data.name + "</div>";
     }
-    for (var i = 0; i<lines.length; i++) {
-      var value = lines[i];
-      var length_css = value.data.orientation == "horizontal" ? "width: " + value.data.len + "px" : "height: " + value.data.len + "px";
+    for (i = 0; i<lines.length; i++) {
+      value = lines[i];
+      var length_css = value.data.orientation === "horizontal" ? "width: " + value.data.len + "px" : "height: " + value.data.len + "px";
       returnData+="<div class='line' style='top:" + value.top + "px; left:" + value.left + "px; " + length_css + "'>&nbsp;</div>";
     }
     return returnData;
@@ -220,8 +225,9 @@ ChartHelper = {
     var mostNegativeTop = 1000;
     var returnData = [];
     var returnLines = [];
+    var value;
     for (var i = 0; i<inData.length; i++) {
-      var value = inData[i];
+      value = inData[i];
       if (value.left < mostNegativeLeft) {
         mostNegativeLeft = value.left;
       }
@@ -229,16 +235,16 @@ ChartHelper = {
         mostNegativeTop = value.top;
       }
     }
-    for (var i = 0; i<inData.length; i++) {
-      var value = inData[i];
+    for (i = 0; i<inData.length; i++) {
+      value = inData[i];
       returnData[i] = {
         left: value.left - mostNegativeLeft,
         top: value.top - mostNegativeTop,
         data: value.data
       };
     }
-    for (var i = 0; i<inLines.length; i++) {
-      var value = inLines[i];
+    for (i = 0; i<inLines.length; i++) {
+      value = inLines[i];
       returnLines[i] = {
         left: value.left - mostNegativeLeft,
         top: value.top - mostNegativeTop,
@@ -259,6 +265,10 @@ ChartHelper = {
       inElement.left+=(110*inElement.maxWidth)/2;
       data[data.length] = inElement;
     });
+
+    var left1;
+    var top;
+    var len;
     
     this.preOrder(pedigree, function(inElement) {
       // and add lines
@@ -268,12 +278,12 @@ ChartHelper = {
         for (var i = 0; i<children.length; i++) {
           var child = children[i];
           lines[lines.length] = {left: child.left + 50, top: child.top - 18, data: {orientation: "vertical", len: 18}};
-          if (i == 0) {
-            var left1 = child.left + 50;
-            var top = child.top - 18;
+          if (i === 0) {
+            left1 = child.left + 50;
+            top = child.top - 18;
           }
-          if (i == children.length - 1) {
-            var len = (child.left + 50) - left1;
+          if (i === children.length - 1) {
+            len = (child.left + 50) - left1;
           }
         }
         lines[lines.length] = {left: left1, top: top, data: {orientation: "horizontal", len: len}};
@@ -282,12 +292,14 @@ ChartHelper = {
     
     var root_left = pedigree.left;
     var root_top = pedigree.top;
-    
-    for (var i = 0; i<data.length; i++) {
+
+    var i;
+
+    for (i = 0; i<data.length; i++) {
       data[i].left-= root_left;
       data[i].top-= root_top;
     }
-    for (var i = 0; i<lines.length; i++) {
+    for (i = 0; i<lines.length; i++) {
       lines[i].left-= root_left;
       lines[i].top-= root_top;
     }
