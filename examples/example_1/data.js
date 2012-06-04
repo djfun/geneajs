@@ -29,12 +29,12 @@ var myTree = {
       children: [
         {
           data: {
-            name: "Brother 2s daughter"
+            name: "Brother 2s daughter 1"
           }
         },
         {
           data: {
-            name: "Brother 2s daughter"
+            name: "Brother 2s daughter 2"
           }
         },
         {
@@ -42,6 +42,62 @@ var myTree = {
             name: "Brother 2s son"
           }
         }
+      ]
+    },
+  ],
+  father_siblings: [
+    {
+      data: {
+        name: "Aunt 1"
+      },
+      children: [
+        {
+          data: {
+            name: "Aunt 1s son 1"
+          }
+        },
+        {
+          data: {
+            name: "Aunt 1s son 2"
+          }
+        },
+      ]
+    },
+    {
+      data: {
+        name: "Aunt 2"
+      },
+      children: [
+        {
+          data: {
+            name: "Aunt 2s son"
+          }
+        },
+        {
+          data: {
+            name: "Aunt 2s daughter"
+          }
+        },
+        {
+          data: {
+            name: "Aunt 2s son"
+          }
+        },
+        {
+          data: {
+            name: "Aunt 2s son"
+          }
+        },
+        {
+          data: {
+            name: "Aunt 2s daughter"
+          }
+        },
+        {
+          data: {
+            name: "Aunt 2s daughter"
+          }
+        },
       ]
     },
   ],
@@ -53,12 +109,12 @@ var myTree = {
       children: [
         {
           data: {
-            name: "Aunt 1s son"
+            name: "Aunt 1s son 1"
           }
         },
         {
           data: {
-            name: "Aunt 1s son"
+            name: "Aunt 1s son 2"
           }
         },
       ]

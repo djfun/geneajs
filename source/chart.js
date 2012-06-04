@@ -42,6 +42,7 @@ ChartHelper = {
     
     var data = [];
     var lines = [];
+    var returnObject;
     for (i = inDepth; i>0; i--) {
       var inv_i = inDepth - i;
       for (j = 0; j < ancestors[i].length; j++) {
@@ -82,32 +83,16 @@ ChartHelper = {
     data = data.concat(ped_data);
     lines = lines.concat(ped_lines);
     
+
     var right_space = (110*pedigree.data[0].maxWidth)/2;
     // siblings1
     if (inAncestors.siblings1) {
       
-      for (j = 0; j<inAncestors.siblings1.length; j++) {
-        
-        var siblings1_ped = this.renderPedigree(inAncestors.siblings1[j]);
-        var sib1_ped_data = siblings1_ped.data;
-        var sib1_ped_lines = siblings1_ped.lines;
-        new_left = left - right_space - ((110*siblings1_ped.data[0].maxWidth)/2);
-        for (i = 0; i<sib1_ped_data.length; i++) {
-          sib1_ped_data[i].left+= new_left;
-          sib1_ped_data[i].top+= 0;
-        }
-        for (i = 0; i<sib1_ped_lines.length; i++) {
-          sib1_ped_lines[i].left+= new_left;
-          sib1_ped_lines[i].top+= 0;
-        }
-        right_space+= 110*siblings1_ped.data[0].maxWidth;
-        
-        lines[lines.length] = {left: new_left + 50, top: -18, data: {orientation: "vertical", len: 18}};
-        lines[lines.length] = {left: new_left + 50, top: -18, data: {orientation: "horizontal", len: left - (new_left + 50)}};
-        
-        data = data.concat(sib1_ped_data);
-        lines = lines.concat(sib1_ped_lines);
-      }
+      returnObject = this.renderPart(inAncestors.father_siblings, left, 0, right_space, 'right');
+
+      data = data.concat(returnObject.data);
+      lines = lines.concat(returnObject.lines);
+      right_space = returnObject.space;
     }
     
     // father_siblings
@@ -117,27 +102,12 @@ ChartHelper = {
       if (right_space < 55) {
         right_space = 55;
       }
-      for (j = 0; j<inAncestors.father_siblings.length; j++) {
-        var father_sib_ped = this.renderPedigree(inAncestors.father_siblings[j]);
-        var father_sib_ped_data = father_sib_ped.data;
-        var father_sib_ped_lines = father_sib_ped.lines;
-        new_left = father_left - right_space - ((110*father_sib_ped.data[0].maxWidth)/2);
-        for (i = 0; i<father_sib_ped_data.length; i++) {
-          father_sib_ped_data[i].left+= new_left;
-          father_sib_ped_data[i].top-= 140;
-        }
-        for (i = 0; i<father_sib_ped_lines.length; i++) {
-          father_sib_ped_lines[i].left+= new_left;
-          father_sib_ped_lines[i].top-= 140;
-        }
-        right_space+= 110*father_sib_ped.data[0].maxWidth;
-        
-        lines[lines.length] = {left: new_left + 50, top: -18-140, data: {orientation: "vertical", len: 18}};
-        lines[lines.length] = {left: new_left + 50, top: -18-140, data: {orientation: "horizontal", len: father_left - (new_left + 50)}};
-        
-        data = data.concat(father_sib_ped_data);
-        lines = lines.concat(father_sib_ped_lines);
-      }
+      returnObject = this.renderPart(inAncestors.father_siblings, father_left, -140, right_space, 'right');
+
+      data = data.concat(returnObject.data);
+      lines = lines.concat(returnObject.lines);
+      right_space = returnObject.space;
+
     }
     
     // now the other side
@@ -145,29 +115,11 @@ ChartHelper = {
     
     //siblings2
     if (inAncestors.siblings2) {
-      
-      for (j = 0; j<inAncestors.siblings2.length; j++) {
-        
-        var siblings2_ped = this.renderPedigree(inAncestors.siblings2[j]);
-        var sib2_ped_data = siblings2_ped.data;
-        var sib2_ped_lines = siblings2_ped.lines;
-        new_left = left + left_space + ((110*siblings2_ped.data[0].maxWidth)/2);
-        for (i = 0; i<sib2_ped_data.length; i++) {
-          sib2_ped_data[i].left+= new_left;
-          sib2_ped_data[i].top+= 0;
-        }
-        for (i = 0; i<sib2_ped_lines.length; i++) {
-          sib2_ped_lines[i].left+= new_left;
-          sib2_ped_lines[i].top+= 0;
-        }
-        left_space+= 110*siblings2_ped.data[0].maxWidth;
-        
-        lines[lines.length] = {left: new_left + 50, top: -18, data: {orientation: "vertical", len: 18}};
-        lines[lines.length] = {left: left + 50, top: -18, data: {orientation: "horizontal", len: (new_left) - left}};
-        
-        data = data.concat(sib2_ped_data);
-        lines = lines.concat(sib2_ped_lines);
-      }
+      returnObject = this.renderPart(inAncestors.siblings2, left, 0, left_space, 'left');
+
+      data = data.concat(returnObject.data);
+      lines = lines.concat(returnObject.lines);
+      left_space = returnObject.space;
     }
     
     // mother_siblings
@@ -177,30 +129,48 @@ ChartHelper = {
       if (left_space < 55) {
         left_space = 55;
       }
-      for (j = 0; j<inAncestors.mother_siblings.length; j++) {
-        var mother_sib_ped = this.renderPedigree(inAncestors.mother_siblings[j]);
-        var mother_sib_ped_data = mother_sib_ped.data;
-        var mother_sib_ped_lines = mother_sib_ped.lines;
-        new_left = mother_left + left_space + ((110*mother_sib_ped.data[0].maxWidth)/2);
-        for (i = 0; i<mother_sib_ped_data.length; i++) {
-          mother_sib_ped_data[i].left+= new_left;
-          mother_sib_ped_data[i].top-= 140;
-        }
-        for (i = 0; i<mother_sib_ped_lines.length; i++) {
-          mother_sib_ped_lines[i].left+= new_left;
-          mother_sib_ped_lines[i].top-= 140;
-        }
-        left_space+= 110*mother_sib_ped.data[0].maxWidth;
-        
-        lines[lines.length] = {left: new_left + 50, top: -18-140, data: {orientation: "vertical", len: 18}};
-        lines[lines.length] = {left: mother_left + 50, top: -18-140, data: {orientation: "horizontal", len: new_left - mother_left}};
-        
-        data = data.concat(mother_sib_ped_data);
-        lines = lines.concat(mother_sib_ped_lines);
-      }
+      returnObject = this.renderPart(inAncestors.mother_siblings, mother_left, -140, left_space, 'left');
+
+      data = data.concat(returnObject.data);
+      lines = lines.concat(returnObject.lines);
     }
     
     return this.draw(data, lines);
+  },
+  renderPart: function(inElements, inLeft, inTop, inSpace, direction) {
+    var return_data = [];
+    var return_lines = [];
+    for (j = 0; j<inElements.length; j++) {
+      var ped = this.renderPedigree(inElements[j]);
+      var ped_data = ped.data;
+      var ped_lines = ped.lines;
+      if (direction === 'left') {
+        new_left = inLeft + inSpace + ((110 * ped.data[0].maxWidth) / 2);
+      } else if (direction === 'right') {
+        new_left = inLeft - inSpace - ((110 * ped.data[0].maxWidth) / 2);
+      }
+      for (i = 0; i<ped_data.length; i++) {
+        ped_data[i].left+= new_left;
+        ped_data[i].top+= inTop;
+        console.log(ped_data[i]);
+      }
+      for (i = 0; i<ped_lines.length; i++) {
+        ped_lines[i].left+= new_left;
+        ped_lines[i].top+= inTop;
+      }
+      inSpace+= 110*ped.data[0].maxWidth;
+
+      var len = direction === 'left' ? new_left - inLeft : inLeft - new_left;
+      var hor_line_left = direction === 'left' ? inLeft + 50 : new_left + 50;
+      
+      ped_lines[ped_lines.length] = {left: new_left + 50, top: -18+inTop, data: {orientation: "vertical", len: 18}};
+      ped_lines[ped_lines.length] = {left: hor_line_left, top: -18+inTop, data: {orientation: "horizontal", len: len}};
+      
+      return_data = return_data.concat(ped_data);
+      return_lines = return_lines.concat(ped_lines);
+
+    }
+    return {data: return_data, lines: return_lines, space: inSpace};
   },
   draw: function(inData, inLines) {
     var returnData = "";
