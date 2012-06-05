@@ -5,7 +5,7 @@
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Foobar is distributed in the hope that it will be useful,
+  djfun/familytree is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Lesser General Public License for more details.
@@ -70,6 +70,7 @@ ChartHelper = {
     var pedigree = this.renderPedigree(inAncestors.pedigree);
     var ped_data = pedigree.data;
     var ped_lines = pedigree.lines;
+    var ped_offset = pedigree.offset;
     
     left = Math.pow(2, inDepth - 1) * (ChartHelper.width + 10) - ((ChartHelper.width + 10) / 2) + Math.pow(2, inDepth) * (ChartHelper.width + 10) * 0;
     for (i = 0; i<ped_data.length; i++) {
@@ -85,12 +86,11 @@ ChartHelper = {
     data = data.concat(ped_data);
     lines = lines.concat(ped_lines);
 
-
     var right_space = ((ChartHelper.width + 10)*pedigree.data[0].maxWidth)/2;
     // siblings1
     if (inAncestors.siblings1) {
       
-      returnObject = this.renderPart(inAncestors.father_siblings, left, 0, right_space, 'right');
+      returnObject = this.renderPart(inAncestors.father_siblings, left, 0, right_space + ped_offset, 'right');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -104,7 +104,7 @@ ChartHelper = {
       if (right_space < ((ChartHelper.width + 10) / 2)) {
         right_space = (ChartHelper.width + 10) / 2;
       }
-      returnObject = this.renderPart(inAncestors.father_siblings, father_left, -(ChartHelper.height + 40), right_space, 'right');
+      returnObject = this.renderPart(inAncestors.father_siblings, father_left, -(ChartHelper.height + 40), right_space + ped_offset, 'right');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -117,7 +117,7 @@ ChartHelper = {
     
     //siblings2
     if (inAncestors.siblings2) {
-      returnObject = this.renderPart(inAncestors.siblings2, left, 0, left_space, 'left');
+      returnObject = this.renderPart(inAncestors.siblings2, left, 0, left_space + ped_offset, 'left');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -131,7 +131,7 @@ ChartHelper = {
       if (left_space < ((ChartHelper.width + 10) / 2)) {
         left_space = (ChartHelper.width + 10) / 2;
       }
-      returnObject = this.renderPart(inAncestors.mother_siblings, mother_left, -(ChartHelper.height + 40), left_space, 'left');
+      returnObject = this.renderPart(inAncestors.mother_siblings, mother_left, -(ChartHelper.height + 40), left_space + ped_offset, 'left');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -142,10 +142,11 @@ ChartHelper = {
   renderPart: function(inElements, inLeft, inTop, inSpace, direction) {
     var return_data = [];
     var return_lines = [];
-    for (j = 0; j<inElements.length; j++) {
+    for (var j = 0; j<inElements.length; j++) {
       var ped = this.renderPedigree(inElements[j]);
       var ped_data = ped.data;
       var ped_lines = ped.lines;
+      var ped_offset = ped.offset;
       if (direction === 'left') {
         new_left = inLeft + inSpace + (((ChartHelper.width + 10) * ped.data[0].maxWidth) / 2);
       } else if (direction === 'right') {
@@ -154,7 +155,6 @@ ChartHelper = {
       for (i = 0; i<ped_data.length; i++) {
         ped_data[i].left+= new_left;
         ped_data[i].top+= inTop;
-        console.log(ped_data[i]);
       }
       for (i = 0; i<ped_lines.length; i++) {
         ped_lines[i].left+= new_left;
@@ -228,15 +228,37 @@ ChartHelper = {
   renderPedigree: function(inPedigree) {
     
     var pedigree = this.preparePedigree(inPedigree);
+
+    var i;
     
     var data = [];
     var lines = [];
+    var offset = 0;
     
     this.preOrder(pedigree, function(inElement) {
       // center the element
       inElement.left+=((ChartHelper.width + 10)*inElement.maxWidth)/2;
       data[data.length] = inElement;
     });
+
+    var spouses_data = [];
+
+    for (i = 0; i<data.length; i++) {
+      if (data[i].spouses) {
+        if (data[i].spouses.length === 1) {
+          data[i].spouses[0].top = data[i].top;
+          data[i].spouses[0].left = data[i].left + ((ChartHelper.width + 10) / 2);
+          data[i].left = data[i].spouses[0].left - (ChartHelper.width + 10);
+          spouses_data[spouses_data.length] = data[i].spouses[0];
+        }
+      }
+    }
+    if (inPedigree.spouses) {
+      if (inPedigree.spouses.length === 1) {
+        offset = ((ChartHelper.width + 10) / 2);
+      }
+    }
+    data = data.concat(spouses_data);
 
     var left1;
     var top;
@@ -245,7 +267,7 @@ ChartHelper = {
     this.preOrder(pedigree, function(inElement) {
       // and add lines
       if (inElement.children) {
-        lines[lines.length] = {left: inElement.left + (ChartHelper.width / 2), top: inElement.top + ChartHelper.height + 2, data: {orientation: "vertical", len: 20}};
+        lines[lines.length] = {left: inElement.left + (ChartHelper.width / 2), top: inElement.top + ChartHelper.height + 2, data: {orientation: "vertical", len: 40}};
         var children = inElement.children;
         for (var i = 0; i<children.length; i++) {
           var child = children[i];
@@ -265,8 +287,6 @@ ChartHelper = {
     var root_left = pedigree.left;
     var root_top = pedigree.top;
 
-    var i;
-
     for (i = 0; i<data.length; i++) {
       data[i].left-= root_left;
       data[i].top-= root_top;
@@ -276,34 +296,59 @@ ChartHelper = {
       lines[i].top-= root_top;
     }
     
-    return {data: data, lines: lines};
+    return {data: data, lines: lines, offset: offset};
   },
   preparePedigree: function(inPedigree) {
-    if (inPedigree.children) {
-      var children = [];
-      var maxWidth = 0;
-      for (var i = 0; i<inPedigree.children.length; i++) {
-        children[children.length] = this.preparePedigree(inPedigree.children[i]);
-        
-        var currentChild = children[children.length -1];
-        
-        this.preOrder(currentChild, function(inElement) {
-          inElement.left+= (ChartHelper.width + 10) * maxWidth;
-          inElement.top+= ChartHelper.height + 40;
-        });
-        
-        maxWidth+= currentChild.maxWidth;
-      }
-      return {left: 0, top: 0, maxWidth: maxWidth, data: inPedigree.data, children: children};
-    } else {
+    var maxWidth = 0;
+    var spouses = [];
+
+    var moveElement = function (inElement) {
+      inElement.left+= (ChartHelper.width + 10) * maxWidth;
+      inElement.top+= ChartHelper.height + 40;
+    };
+
+    if (!inPedigree.spouses) {
       return {left: 0, top: 0, maxWidth: 1, data: inPedigree.data};
+    } else {
+      for (var i = 0; i<inPedigree.spouses.length; i++) {
+        if (!inPedigree.spouses[i].children) {
+          maxWidth+= 1;
+          if (i === 0) {
+            maxWidth+= 1;
+          }
+          spouses[spouses.length] = {
+            data: inPedigree.spouses[i].data
+          };
+        } else {
+          var children = [];
+          for (var j = 0; j<inPedigree.spouses[i].children.length; j++) {
+            children[children.length] = this.preparePedigree(inPedigree.spouses[i].children[j]);
+            var currentChild = children[children.length - 1];
+            this.preOrder(currentChild, moveElement);
+
+            maxWidth+= currentChild.maxWidth;
+            if (i === 0 && inPedigree.spouses[i].children.length === 1 && currentChild.maxWidth === 1) {
+              maxWidth+= 1;
+            }
+          }
+          spouses[spouses.length] = {
+            data: inPedigree.spouses[i].data,
+            children: children
+          };
+        }
+      }
+      return {left: 0, top: 0, maxWidth: maxWidth, data: inPedigree.data, spouses: spouses};
     }
   },
   preOrder: function(inTree, inCallback) {
     inCallback(inTree);
-    if (inTree.children) {
-      for (var i = 0; i<inTree.children.length; i++) {
-        this.preOrder(inTree.children[i], inCallback);
+    if (inTree.spouses) {
+      for (var i = 0; i<inTree.spouses.length; i++) {
+        if (inTree.spouses[i].children) {
+          for (var j = 0; j<inTree.spouses[i].children.length; j++) {
+            this.preOrder(inTree.spouses[i].children[j], inCallback);
+          }
+        }
       }
     }
   }
