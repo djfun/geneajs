@@ -176,6 +176,23 @@ var myTree = {
               }
             }
           ]
+        },
+        {
+          data: {
+            name: "S4b"
+          },
+          children: [
+            {
+              data: {
+                name: "b1 Aunt 2s son 1"
+              }
+            }
+          ]
+        },
+        {
+          data: {
+            name: "S4c"
+          }
         }
       ]
     }
