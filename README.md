@@ -13,14 +13,19 @@ It displays
 *  all ancestors
 *  the siblings of father and mother and their descendants
 *  the descendants of the reference person
+*  spouses of descendants and reference person
 
 Todo
 ----
-
-* display spouses of descendants and reference person
 * more formatting and data for the person boxes
+* compact tree ?
+* zoom ?
+* functions for building familytree data structure
 
 How can I use it?
 -----------------
+You do need a data structure like the one in the example. Then you can call
 
-Look at the example and use it like I did there ;)
+    ChartHelper.render(myTree, depth)
+
+to get html divs back that are the boxes and lines of the family tree.
