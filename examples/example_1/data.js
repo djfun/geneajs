@@ -1,42 +1,49 @@
 var myTree = {
   pedigree: {
     data: {
-      name: "Me"
+      name: "Me",
+      gender: "male"
     },
     spouses: [
       {
         data: {
-          name: "S1"
+          name: "S1",
+          gender: "female"
         },
         children: [
           {
             data: {
-              name: "Child 1"
+              name: "Child 1",
+              gender: "male"
             }
           },
           {
             data: {
-              name: "Child 2"
+              name: "Child 2",
+              gender: "male"
             }
           }
         ]
       }
     ]
   },
-  siblings2: [
+  siblings1: [
     {
       data: {
-        name: "Brother 1"
+        name: "Brother 1",
+        gender: "male"
       },
       spouses: [
         {
           data: {
-            name: "Brother 1s spouse"
+            name: "Brother 1s spouse",
+            gender: "female"
           },
           children: [
             {
               data: {
-                name: "Brother 1s daughter 1"
+                name: "Brother 1s daughter 1",
+                gender: "female"
               }
             }
           ]
@@ -45,154 +52,35 @@ var myTree = {
     },
     {
       data: {
-        name: "Brother 2"
+        name: "Brother 2",
+        gender: "male"
       },
       spouses: [
         {
           data: {
-            name: "S2"
+            name: "S2",
+            gender: "female"
           },
           children: [
             {
               data: {
-                name: "Brother 2s daughter 1"
+                name: "Brother 2s daughter 1",
+                gender: "female"
               }
             },
             {
               data: {
-                name: "Brother 2s daughter 2"
+                name: "Brother 2s daughter 2",
+                gender: "female"
               }
             },
             {
               data: {
-                name: "Brother 2s son"
+                name: "Brother 2s son",
+                gender: "male"
               }
             }
           ]
-        }
-      ]
-    }
-  ],
-  father_siblings: [
-    {
-      data: {
-        name: "1 Aunt 1"
-      },
-      spouses: [
-        {
-          data: {
-            name: "S3"
-          },
-          children: [
-            {
-              data: {
-                name: "1 Aunt 1s son 1"
-              }
-            },
-            {
-              data: {
-                name: "1 Aunt 1s son 2"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      data: {
-        name: "1 Aunt 2"
-      },
-      spouses: [
-        {
-          data: {
-            name: "S4"
-          },
-          children: [
-            {
-              data: {
-                name: "1 Aunt 2s son 1"
-              }
-            },
-            {
-              data: {
-                name: "1 Aunt 2s daughter"
-              }
-            },
-            {
-              data: {
-                name: "1 Aunt 2s son 2"
-              }
-            },
-            {
-              data: {
-                name: "1 Aunt 2s son 3"
-              }
-            },
-            {
-              data: {
-                name: "1 Aunt 2s daughter"
-              }
-            },
-            {
-              data: {
-                name: "1 Aunt 2s daughter"
-              }
-            }
-          ]
-        },
-        {
-          data: {
-            name: "S4a"
-          },
-          children: [
-            {
-              data: {
-                name: "a1 Aunt 2s son 1"
-              }
-            },
-            {
-              data: {
-                name: "a1 Aunt 2s daughter"
-              }
-            },
-            {
-              data: {
-                name: "a1 Aunt 2s son 2"
-              }
-            },
-            {
-              data: {
-                name: "a1 Aunt 2s son 3"
-              }
-            },
-            {
-              data: {
-                name: "a1 Aunt 2s daughter"
-              }
-            },
-            {
-              data: {
-                name: "a1 Aunt 2s daughter"
-              }
-            }
-          ]
-        },
-        {
-          data: {
-            name: "S4b"
-          },
-          children: [
-            {
-              data: {
-                name: "b1 Aunt 2s son 1"
-              }
-            }
-          ]
-        },
-        {
-          data: {
-            name: "S4c"
-          }
         }
       ]
     }
@@ -200,37 +88,188 @@ var myTree = {
   mother_siblings: [
     {
       data: {
-        name: "Aunt 1"
+        name: "1 Aunt 1",
+        gender: "female"
       },
       spouses: [
         {
           data: {
-            name: "S5"
+            name: "S3",
+            gender: "male"
           },
           children: [
             {
               data: {
-                name: "Aunt 1s son 1"
+                name: "1 Aunt 1s son 1",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "1 Aunt 1s son 2",
+                gender: "male"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      data: {
+        name: "1 Aunt 2",
+        gender: "female"
+      },
+      spouses: [
+        {
+          data: {
+            name: "S4",
+            gender: "male"
+          },
+          children: [
+            {
+              data: {
+                name: "1 Aunt 2s son 1",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "1 Aunt 2s daughter",
+                gender: "female"
+              }
+            },
+            {
+              data: {
+                name: "1 Aunt 2s son 2",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "1 Aunt 2s son 3",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "1 Aunt 2s daughter",
+                gender: "female"
+              }
+            },
+            {
+              data: {
+                name: "1 Aunt 2s daughter",
+                gender: "female"
+              }
+            }
+          ]
+        },
+        {
+          data: {
+            name: "S4a",
+            gender: "male"
+          },
+          children: [
+            {
+              data: {
+                name: "a1 Aunt 2s son 1",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "a1 Aunt 2s daughter",
+                gender: "female"
+              }
+            },
+            {
+              data: {
+                name: "a1 Aunt 2s son 2",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "a1 Aunt 2s son 3",
+                gender: "male"
+              }
+            },
+            {
+              data: {
+                name: "a1 Aunt 2s daughter",
+                gender: "female"
+              }
+            },
+            {
+              data: {
+                name: "a1 Aunt 2s daughter",
+                gender: "female"
+              }
+            }
+          ]
+        },
+        {
+          data: {
+            name: "S4b",
+            gender: "male"
+          },
+          children: [
+            {
+              data: {
+                name: "b1 Aunt 2s son 1",
+                gender: "male"
+              }
+            }
+          ]
+        },
+        {
+          data: {
+            name: "S4c",
+            gender: "male"
+          }
+        }
+      ]
+    },
+    /*{
+      data: {
+        name: "Aunt 1",
+        gender: "female"
+      },
+      spouses: [
+        {
+          data: {
+            name: "S5",
+            gender: "male"
+          },
+          children: [
+            {
+              data: {
+                name: "Aunt 1s son 1",
+                gender: "male"
               },
               spouses: [
                 {
                   data: {
-                    name: "S6"
+                    name: "S6",
+                    gender: "female"
                   },
                   children: [
                     {
                       data: {
-                        name: "Aunt 1s son 1s son"
+                        name: "Aunt 1s son 1s son",
+                        gender: "male"
                       },
                       spouses: [
                         {
                           data: {
-                            name: "Aunt 1s son 1s sons spouse"
+                            name: "Aunt 1s son 1s sons spouse",
+                            gender: "female"
                           },
                           children: [
                             {
                               data: {
-                                name: "Aunt 1s son 1s sons son"
+                                name: "Aunt 1s son 1s sons son",
+                                gender: "male"
                               }
                             }
                           ]
@@ -243,7 +282,76 @@ var myTree = {
             },
             {
               data: {
-                name: "Aunt 1s son 2"
+                name: "Aunt 1s son 2",
+                gender: "male"
+              }
+            }
+          ]
+        }
+      ]
+    }*/
+  ],
+  father_siblings: [
+    {
+      data: {
+        name: "Aunt 0",
+        gender: "female"
+      }
+    },
+    {
+      data: {
+        name: "Aunt 1",
+        gender: "female"
+      },
+      spouses: [
+        {
+          data: {
+            name: "S5",
+            gender: "male"
+          },
+          children: [
+            {
+              data: {
+                name: "Aunt 1s son 1",
+                gender: "male"
+              },
+              spouses: [
+                {
+                  data: {
+                    name: "S6",
+                    gender: "female"
+                  },
+                  children: [
+                    {
+                      data: {
+                        name: "Aunt 1s son 1s son",
+                        gender: "male"
+                      },
+                      spouses: [
+                        {
+                          data: {
+                            name: "Aunt 1s son 1s sons spouse",
+                            gender: "female"
+                          },
+                          children: [
+                            {
+                              data: {
+                                name: "Aunt 1s son 1s sons son",
+                                gender: "male"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              data: {
+                name: "Aunt 1s son 2",
+                gender: "male"
               }
             }
           ]
@@ -252,42 +360,50 @@ var myTree = {
     },
     {
       data: {
-        name: "Aunt 2"
+        name: "Aunt 2",
+        gender: "female"
       },
       spouses: [
         {
           data: {
-            name: "S7"
+            name: "S7",
+            gender: "male"
           },
           children: [
             {
               data: {
-                name: "Aunt 2s son"
+                name: "Aunt 2s son",
+                gender: "male"
               }
             },
             {
               data: {
-                name: "Aunt 2s daughter"
+                name: "Aunt 2s daughter",
+                gender: "female"
               }
             },
             {
               data: {
-                name: "Aunt 2s son"
+                name: "Aunt 2s son",
+                gender: "male"
               }
             },
             {
               data: {
-                name: "Aunt 2s son"
+                name: "Aunt 2s son",
+                gender: "male"
               }
             },
             {
               data: {
-                name: "Aunt 2s daughter"
+                name: "Aunt 2s daughter",
+                gender: "female"
               }
             },
             {
               data: {
-                name: "Aunt 2s daughter"
+                name: "Aunt 2s daughter",
+                gender: "female"
               }
             }
           ]
@@ -297,40 +413,48 @@ var myTree = {
   ],
   father: {
     data: {
-      name: "Father"
+      name: "Father",
+      gender: "male"
     }
   },
   mother: {
     data: {
-      name: "Mother"
+      name: "Mother",
+      gender: "female"
     },
     father: {
       data: {
-        name: "Grandfather"
+        name: "Grandfather",
+        gender: "male"
       },
       father: {
         data: {
-          name: "Great-grandfather"
+          name: "Great-grandfather",
+          gender: "male"
         }
       },
       mother: {
         data: {
-          name: "Great-grandmother"
+          name: "Great-grandmother",
+          gender: "female"
         }
       }
     },
     mother: {
       data: {
-        name: "Grandmother"
+        name: "Grandmother",
+        gender: "female"
       },
       father: {
         data: {
-          name: "Great-grandfather"
+          name: "Great-grandfather",
+          gender: "male"
         }
       },
       mother: {
         data: {
-          name: "Great-grandmother"
+          name: "Great-grandmother",
+          gender: "female"
         }
       }
     }

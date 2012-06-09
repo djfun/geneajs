@@ -16,10 +16,32 @@
 
 .data_node {
   position: absolute;
-  background-color:lightblue;
-  border:1px blue solid;
+  
+  border:1px black solid;
   height: 120px;
   width: 120px; 
+
+  -webkit-box-shadow: 6px 6px 5px lightgray;
+  -moz-box-shadow: 6px 6px 5px lightgray;
+  box-shadow: 6px 6px 5px lightgray;
+
+  /*-webkit-border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
+  -khtml-border-top-left-radius: 10px;
+  -khtml-border-top-right-radius: 10px;
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-topright: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;*/
+}
+.gender_unknown {
+  background-color:lightgray;
+}
+.gender_male {
+  background-color:lightblue;
+}
+.gender_female {
+  background-color:lightpink;
 }
 .line {
   position: absolute;
