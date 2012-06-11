@@ -356,6 +356,9 @@ ChartHelper = {
               });
             } else {
               width = 1;
+              if (spouse_ind === 0) {
+                width = 2;
+              }
             }
             spouse.width = width;
             spouse.left = dat.left +
