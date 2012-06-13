@@ -1,17 +1,17 @@
 /*
-  This file is part of djfun/familytree.
-  djfun/familytree is free software: you can redistribute it and/or modify
+  This file is part of geneajs.
+  geneajs is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  djfun/familytree is distributed in the hope that it will be useful,
+  geneajs is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public License
-  along with djfun/familytree.  If not, see <http://www.gnu.org/licenses/>.
+  along with geneajs.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 ChartHelper = {
@@ -307,7 +307,6 @@ ChartHelper = {
         data: line.data
       };
     });
-    console.log("mostnegative: " + mostNegativeLeft);
     return {data: returnData, lines: returnLines};
   },
   renderPedigree: function(inPedigree) {
@@ -378,24 +377,17 @@ ChartHelper = {
       if (inPedigree.spouses.length === 1) {
         left_offset = (data[0].spouses[0].width * (ChartHelper.width + 10) / 2 - 5) -
             (ChartHelper.width + 5);
-            console.log(data[0].spouses[0].width);
         right_offset = (data[0].spouses[0].width * (ChartHelper.width + 10) / 2 - 5) +
             (ChartHelper.width + 5);
-        console.log("Fall 1");
       } else {
         left_offset = (data[0].spouses[0].width * (ChartHelper.width + 10) / 2 - 5) -
             (ChartHelper.width + 5);
         right_offset = data[0].width00 * (ChartHelper.width + 10) - 10 - left_offset;
-        console.log("Fall 2");
       }
     } else {
       right_offset = ChartHelper.width;
       left_offset = 0;
-      console.log("Fall 3");
     }
-    console.log(data[0].data.name);
-    console.log(left_offset);
-    console.log(right_offset);
     data = data.concat(spouses_data);
 
     var left1;
@@ -550,3 +542,8 @@ ChartHelper = {
     }
   }
 };
+
+
+if (typeof exports !== 'undefined') {
+  exports.ChartHelper = ChartHelper;
+}

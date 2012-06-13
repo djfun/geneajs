@@ -1,17 +1,17 @@
 /*
-  This file is part of djfun/familytree.
-  djfun/familytree is free software: you can redistribute it and/or modify
+  This file is part of geneajs.
+  geneajs is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  djfun/familytree is distributed in the hope that it will be useful,
+  geneajs is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public License
-  along with djfun/familytree.  If not, see <http://www.gnu.org/licenses/>.
+  along with geneajs.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 .data_node {
@@ -24,15 +24,6 @@
   -webkit-box-shadow: 6px 6px 5px lightgray;
   -moz-box-shadow: 6px 6px 5px lightgray;
   box-shadow: 6px 6px 5px lightgray;
-
-  /*-webkit-border-top-left-radius: 10px;
-  -webkit-border-top-right-radius: 10px;
-  -khtml-border-top-left-radius: 10px;
-  -khtml-border-top-right-radius: 10px;
-  -moz-border-radius-topleft: 10px;
-  -moz-border-radius-topright: 10px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;*/
 }
 .gender_unknown {
   background-color:lightgray;
