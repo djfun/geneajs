@@ -1,0 +1,11 @@
+body {
+  background-color:lightgray;
+}
+h1 {
+  text-align:center;
+}
+#content {
+  margin:0px auto;
+  width: 700px;
+  text-align:center;
+}
