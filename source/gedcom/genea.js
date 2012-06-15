@@ -15,7 +15,7 @@
 */
 
 var Indi = require('./indi').Indi;
-var Event = require('./event').Event;
+var Events = require('./event');
 var GedcomDate = require('./gedcomdate').GedcomDate;
 
 Genea = function(ged) {
@@ -41,10 +41,9 @@ Genea = function(ged) {
   this.people = ged.people.map(function(indi) {
     var newPerson = new Indi();
     var object, object1, object2, object3, object4;
-    object = Genea.getTagObject('RESN', '1', indi);
-    if (object) {
-      newPerson.setRestrictionNotice(object.value);
-    }
+
+    Genea.setSingleValue('RESN', indi, newPerson, 'setRestrictionNotice');
+
     object = Genea.getTagObject('NAME', 'N', indi);
     if (object) {
       // TODO: add aditional information for names from gedcom
@@ -83,31 +82,101 @@ Genea = function(ged) {
         newPerson.setSex('undefined');
       }
     }
-    object = Genea.getTagObject('BIRT', 'N', indi);
-    if (object) {
-      object.forEach(function(object) {
-        var birth = new Event({type: 'birth'});
-        if (!object.value) {
-          object1 = Genea.getTagObject('DATE', '1', object);
-          if (object1) {
-            birth.setDate(new GedcomDate(object1.value));
-          }
-          object1 = Genea.getTagObject('PLAC', '1', object);
-          if (object1) {
-            birth.setPlace(object1.value);
-          }
+    var eventTags = [
+      {tag: 'TYPE', f: 'setType'},
+      {tag: 'DATE', f: 'setDate'},
+      {tag: 'PLAC', f: 'setPlace'},
+      {tag: 'AGNC', f: 'setAgency'},
+      {tag: 'RELI', f: 'setReligion'},
+      {tag: 'CAUS', f: 'setCause'},
+      {tag: 'RESN', f: 'setRestrictionNotice'}
+    ];
 
-          object1 = Genea.getTagObject('FAMC', '1', object);
-          if (object1) {
-            birth.setFamc(object1.value);
-          }
-        }
-        newPerson.addEvent(birth);
-      });
-    }
+    Genea.setEvent('BIRT', indi, newPerson, eventTags.concat([
+      {tag: 'FAMC', f: 'setFamc'}
+    ]), 'birth', Events.BirthEvent);
+    Genea.setEvent('CHR', indi, newPerson, eventTags.concat([
+      {tag: 'FAMC', f: 'setFamc'}
+    ]), 'christening', Events.ChristeningEvent);
+    Genea.setEvent('DEAT', indi, newPerson,
+      eventTags, 'death', Events.DeathEvent);
+    Genea.setEvent('BURI', indi, newPerson,
+      eventTags, 'burial', Events.BurialEvent);
+    Genea.setEvent('CREM', indi, newPerson,
+      eventTags, 'cremation', Events.CremationEvent);
+    Genea.setEvent('ADOP', indi, newPerson, eventTags.concat([
+      {tag: 'FAMC', f: 'setFamc', subtags: [
+        {tag: 'ADOP', f: 'setAdoptedBy'}
+      ]}
+    ]), 'adoption', Events.AdoptionEvent);
+    Genea.setEvent('BAPM', indi, newPerson,
+      eventTags, 'baptism', Events.BaptismEvent);
+    Genea.setEvent('BARM', indi, newPerson,
+      eventTags, 'barmitzvah', Events.BarMitzvahEvent);
+    Genea.setEvent('BASM', indi, newPerson,
+      eventTags, 'basmitzvah', Events.BasMitzvahEvent);
+    Genea.setEvent('BLES', indi, newPerson,
+      eventTags, 'blessing', Events.BlesEvent);
+    Genea.setEvent('CHRA', indi, newPerson,
+      eventTags, 'adultchristening', Events.AdultChristeningEvent);
+    Genea.setEvent('CONF', indi, newPerson,
+      eventTags, 'confirmation', Events.ConfirmationEvent);
+    Genea.setEvent('FCOM', indi, newPerson,
+      eventTags, 'firstcommunion', Events.FirstCommunionEvent);
+    Genea.setEvent('ORDN', indi, newPerson,
+      eventTags, 'ordination', Events.OrdinationEvent);
+    Genea.setEvent('NATU', indi, newPerson,
+      eventTags, 'naturalization', Events.NaturalizationEvent);
+    Genea.setEvent('EMIG', indi, newPerson,
+      eventTags, 'emigration', Events.EmigrationEvent);
+    Genea.setEvent('IMMI', indi, newPerson,
+      eventTags, 'immigration', Events.ImmigrationEvent);
+    Genea.setEvent('CENS', indi, newPerson,
+      eventTags, 'census', Events.CensusEvent);
+    Genea.setEvent('PROB', indi, newPerson,
+      eventTags, 'probate', Events.ProbateEvent);
+    Genea.setEvent('WILL', indi, newPerson,
+      eventTags, 'will', Events.WillEvent);
+    Genea.setEvent('GRAD', indi, newPerson,
+      eventTags, 'graduation', Events.GradEvent);
+    Genea.setEvent('RETI', indi, newPerson,
+      eventTags, 'retirement', Events.RetiEvent);
+    Genea.setEvent('EVEN', indi, newPerson,
+      eventTags, 'event', Events.IndividualEvent);
+
+    // console.log(JSON.stringify(newPerson));
     console.log(newPerson);
     return newPerson;
   });
+};
+Genea.setEvent = function(tag, object, person, subtags, type, event) {
+  object = Genea.getTagObject(tag, 'N', object);
+  if (object) {
+    object.forEach(function(object) {
+      var e = new event({_type: type});
+      // if (!object.value) {
+      if (object.data.length !== 0) {
+        Genea.setMultipleValues(subtags, object, e);
+      }
+      person.addEvent(e);
+    });
+  }
+};
+Genea.setMultipleValues = function(tags, object, e) {
+  var object1;
+  tags.forEach(function(sub) {
+    object1 = Genea.setSingleValue(sub.tag, object, e, sub.f);
+    if (sub.subtags) {
+      Genea.setMultipleValues(sub.subtags, object1, e);
+    }
+  });
+};
+Genea.setSingleValue = function(tag, object, e, f) {
+  var object1 = Genea.getTagObject(tag, '1', object);
+  if (object1) {
+    e[f](object1.value);
+  }
+  return object1;
 };
 Genea.getTagObject = function(tag, type, tag_object) {
   var returnObject = [];
