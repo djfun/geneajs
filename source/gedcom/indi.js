@@ -19,6 +19,7 @@ var Indi = function() {
   this.restriction_notice = null;
   this.sex = 'unknown';
   this.events = [];
+  this.attributes = [];
 };
 
 Indi.prototype.getFullName = function() {
@@ -52,6 +53,9 @@ Indi.prototype.addName = function(name) {
 };
 Indi.prototype.addEvent = function(e) {
   this.events.push(e);
+};
+Indi.prototype.addAttribute = function(e) {
+  this.attributes.push(e);
 };
 
 exports.Indi = Indi;

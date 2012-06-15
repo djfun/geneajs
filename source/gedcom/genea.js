@@ -16,6 +16,7 @@
 
 var Indi = require('./indi').Indi;
 var Events = require('./event');
+var IndiAttributes = require('./attributes');
 var GedcomDate = require('./gedcomdate').GedcomDate;
 
 Genea = function(ged) {
@@ -144,23 +145,74 @@ Genea = function(ged) {
     Genea.setEvent('EVEN', indi, newPerson,
       eventTags, 'event', Events.IndividualEvent);
 
+    Genea.setStructure({tag: 'CAST', f: 'setCasteName'},
+      indi, newPerson, eventTags, 'castename',
+      IndiAttributes.CasteNameAttr, 'addAttribute');
+    Genea.setStructure({tag: 'DSCR', f: 'setDescription'},
+      indi, newPerson, eventTags, 'physicaldescription',
+      IndiAttributes.PhysicalDescriptionAttr, 'addAttribute');
+    Genea.setStructure({tag: 'EDUC', f: 'setEducation'},
+      indi, newPerson, eventTags, 'scholasticachievement',
+      IndiAttributes.ScholasticAchievementAttr, 'addAttribute');
+    Genea.setStructure({tag: 'IDNO', f: 'setNationalIDNumber'},
+      indi, newPerson, eventTags, 'nationalidnumber',
+      IndiAttributes.NationalIDNumberAttr, 'addAttribute');
+    Genea.setStructure({tag: 'NATI', f: 'setOrigin'},
+      indi, newPerson, eventTags, 'nationalortribalorigin',
+      IndiAttributes.NationalOrTribalOriginAttr, 'addAttribute');
+    Genea.setStructure({tag: 'NCHI', f: 'setCountOfChildren'},
+      indi, newPerson, eventTags, 'countofchildren',
+      IndiAttributes.CountOfChildrenAttr, 'addAttribute');
+    Genea.setStructure({tag: 'NMR', f: 'setCountOfMarriages'},
+      indi, newPerson, eventTags, 'countofmarriages',
+      IndiAttributes.CountOfMarriagesAttr, 'addAttribute');
+    Genea.setStructure({tag: 'OCCU', f: 'setOccupation'},
+      indi, newPerson, eventTags, 'occupation',
+      IndiAttributes.OccupationAttr, 'addAttribute');
+    Genea.setStructure({tag: 'PROP', f: 'setPossessions'},
+      indi, newPerson, eventTags, 'possessions',
+      IndiAttributes.PossessionsAttr, 'addAttribute');
+    Genea.setStructure({tag: 'RELI', f: 'setReligion'},
+      indi, newPerson, eventTags, 'religion',
+      IndiAttributes.ReligionAttr, 'addAttribute');
+    Genea.setStructure({tag: 'RESI'},
+      indi, newPerson, eventTags, 'residence',
+      IndiAttributes.ResidenceAttr, 'addAttribute');
+    Genea.setStructure({tag: 'SSN', f: 'setSocialSecurityNumber'},
+      indi, newPerson, eventTags, 'socialsecuritynumber',
+      IndiAttributes.SocialSecurityNumberAttr, 'addAttribute');
+    Genea.setStructure({tag: 'TITL', f: 'setNobilityTypeTitle'},
+      indi, newPerson, eventTags, 'nobilitytypetitle',
+      IndiAttributes.NobilityTypeTitleAttr, 'addAttribute');
+    Genea.setStructure({tag: 'FACT', f: 'setFact'},
+      indi, newPerson, eventTags, 'fact',
+      IndiAttributes.FactAttr, 'addAttribute');
+
     // console.log(JSON.stringify(newPerson));
     console.log(newPerson);
     return newPerson;
   });
 };
-Genea.setEvent = function(tag, object, person, subtags, type, event) {
-  object = Genea.getTagObject(tag, 'N', object);
+Genea.setStructure = function(tag, inObject, outObject, subtags, typeString, type, method) {
+  var object = Genea.getTagObject(tag.tag, 'N', inObject);
   if (object) {
     object.forEach(function(object) {
-      var e = new event({_type: type});
+      var e = new type({_type: typeString});
       // if (!object.value) {
+      var value = Genea.getFullValue(object);
+      if (value !== '' && value !== ' ' && value !== 'Y' && tag.f) {
+        e[tag.f](value);
+      }
       if (object.data.length !== 0) {
         Genea.setMultipleValues(subtags, object, e);
       }
-      person.addEvent(e);
+      outObject[method](e);
     });
   }
+};
+
+Genea.setEvent = function(tag, object, person, subtags, type, event) {
+  Genea.setStructure({tag: tag}, object, person, subtags, type, event, 'addEvent');
 };
 Genea.setMultipleValues = function(tags, object, e) {
   var object1;
@@ -174,9 +226,31 @@ Genea.setMultipleValues = function(tags, object, e) {
 Genea.setSingleValue = function(tag, object, e, f) {
   var object1 = Genea.getTagObject(tag, '1', object);
   if (object1) {
-    e[f](object1.value);
+    e[f](Genea.getFullValue(object1));
   }
   return object1;
+};
+Genea.getFullValue = function(object) {
+  if(object.data.length === 0) {
+    return object.value;
+  } else if (object.data[0].tag !== 'CONT' && object.data[0].tag !== 'CONC') {
+    return object.value;
+  } else {
+    var dat_ind = 0;
+    var tag = object.data[0].tag;
+    var returnValue = [];
+    returnValue.push(object.value);
+    while ((tag === 'CONT' || tag === 'CONC') && dat_ind < object.data.length) {
+      if (tag === 'CONT') {
+        returnValue.push('\n' + object.data[dat_ind].value);
+      } else {
+        returnValue.push(object.data[dat_ind].value);
+      }
+      dat_ind++;
+      tag = (dat_ind < object.data.length) ? object.data[dat_ind].tag : '';
+    }
+    return returnValue.join('');
+  }
 };
 Genea.getTagObject = function(tag, type, tag_object) {
   var returnObject = [];
