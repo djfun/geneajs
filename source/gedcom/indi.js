@@ -20,6 +20,8 @@ var Indi = function() {
   this.sex = 'unknown';
   this.events = [];
   this.attributes = [];
+  this.notes = [];
+  this.links = [];
 };
 
 Indi.prototype.getFullName = function() {
@@ -56,6 +58,12 @@ Indi.prototype.addEvent = function(e) {
 };
 Indi.prototype.addAttribute = function(e) {
   this.attributes.push(e);
+};
+Indi.prototype.addNote = function(e) {
+  this.notes.push(e);
+};
+Indi.prototype.addLink = function(e) {
+  this.links.push(e);
 };
 
 exports.Indi = Indi;

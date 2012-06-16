@@ -14,17 +14,34 @@
   along with geneajs.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var Note = require('./note');
-
-var GedcomDate = function(dateString) {
-  // TODO: Convert date
-  this.dateString = dateString;
+var Family = function() {
+  this.restriction_notice = null;
+  this.events = [];
+  this.notes = [];
+  this.children = [];
+  this.husband = null;
+  this.wife = null;
 };
 
-var ChangeDate = function(e) {
-  this.date = new GedcomDate(e.date);
-  this.time = e.time;
-  this.notes = e.notes ? e.notes : [];
+Family.prototype.setRestrictionNotice = function(value) {
+  // TODO: add check
+  this.restriction_notice = value;
+  return true;
+};
+Family.prototype.setHusband = function(husb) {
+  this.husband = husb;
+};
+Family.prototype.setWife = function(wife) {
+  this.wife = wife;
+};
+Family.prototype.addChild = function(child) {
+  this.children.push(child);
+};
+Family.prototype.addEvent = function(e) {
+  this.events.push(e);
+};
+Family.prototype.addNote = function(e) {
+  this.notes.push(e);
 };
 
-exports.GedcomDate = GedcomDate;
+exports.Family = Family;

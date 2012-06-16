@@ -13,18 +13,23 @@
   You should have received a copy of the GNU Lesser General Public License
   along with geneajs.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-var Note = require('./note');
-
-var GedcomDate = function(dateString) {
-  // TODO: Convert date
-  this.dateString = dateString;
-};
-
-var ChangeDate = function(e) {
-  this.date = new GedcomDate(e.date);
-  this.time = e.time;
+var Name = function(e) {
+  this.name1 = e.name1;
+  this.name2 = e.name2;
+  this.name3 = e.name3;
   this.notes = e.notes ? e.notes : [];
 };
+Name.prototype.setName1 = function(name) {
+  this.name1 = name;
+};
+Name.prototype.setName2 = function(name) {
+  this.name2 = name;
+};
+Name.prototype.setName3 = function(name) {
+  this.name3 = name;
+};
+Name.prototype.addNote = function(note) {
+  this.notes.push(note);
+};
 
-exports.GedcomDate = GedcomDate;
+exports.Name = Name;

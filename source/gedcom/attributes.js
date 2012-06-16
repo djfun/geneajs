@@ -27,6 +27,7 @@ var inherit = (function() {
 })();
 
 var IndividualAttribute = function(e) {
+  Events.IndividualEvent.call(this, e);
   // TODO: add checks
   this._type = e._type;
 };

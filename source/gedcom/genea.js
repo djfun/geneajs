@@ -15,8 +15,12 @@
 */
 
 var Indi = require('./indi').Indi;
+var Family = require('./fam').Family;
 var Events = require('./event');
 var IndiAttributes = require('./attributes');
+var Note = require('./note');
+var Links = require('./links');
+var Name = require('./name').Name;
 var GedcomDate = require('./gedcomdate').GedcomDate;
 
 Genea = function(ged) {
@@ -43,34 +47,15 @@ Genea = function(ged) {
     var newPerson = new Indi();
     var object, object1, object2, object3, object4;
 
-    Genea.setSingleValue('RESN', indi, newPerson, 'setRestrictionNotice');
+    Genea.setSingleTag('RESN', indi, newPerson, 'setRestrictionNotice');
 
     object = Genea.getTagObject('NAME', 'N', indi);
     if (object) {
       // TODO: add aditional information for names from gedcom
       object.forEach(function(object) {
-        var pos1 = object.value.search(/\//);
-        var name1 = null;
-        var name2 = null;
-        var name3 = null;
-        if (pos1 === -1) {
-          name1 = object.value;
-        } else {
-          var pos2 = object.value.substr(pos1 + 1).search(/\//);
-          if(pos1 > 0) {
-            name1 = object.value.substr(0, pos1 - 1);
-          }
-          name2 = object.value.substr(pos1 + 1, pos2);
-          var pos3 = pos1 + pos2;
-          if (pos3 + 2 < object.value.length) {
-            name3 = object.value.substr(pos2 + 1);
-          }
-        }
-        newPerson.addName({
-          name1: name1,
-          name2: name2,
-          name3: name3
-        });
+        var name = Genea.parseName(object.value);
+        Genea.addNote(object, name);
+        newPerson.addName(name);
       });
     }
     object = Genea.getTagObject('SEX', '1', indi);
@@ -188,10 +173,62 @@ Genea = function(ged) {
       indi, newPerson, eventTags, 'fact',
       IndiAttributes.FactAttr, 'addAttribute');
 
+    Genea.setStructure({tag: 'FAMC', f: 'setFamRef'},
+      indi, newPerson, [
+        {tag: 'PEDI', f: 'setLinkageType'},
+        {tag: 'STAT', f: 'setLinkageStatus'}
+      ], 'famc',
+      Links.ChildToFamilyLink, 'addLink');
+
+    Genea.setStructure({tag: 'FAMS', f: 'setFamRef'},
+      indi, newPerson, [], 'fams',
+      Links.SpouseToFamilyLink, 'addLink');
+
+    Genea.setStructure({tag: 'ASSO', f: 'setIndiRef'},
+      indi, newPerson, [
+        {tag: 'RELA', f: 'setRelationDesc'}
+      ], 'asso',
+      Links.AssociationStructure, 'addLink');
+
+    Genea.addNote(indi, newPerson);
+    
+
     // console.log(JSON.stringify(newPerson));
-    console.log(newPerson);
+    // console.log(newPerson);
     return newPerson;
   });
+  this.families = ged.families.map(function(fam) {
+    var newFamily = new Family();
+    Genea.setSingleTag('RESN', fam, newFamily, 'setRestrictionNotice');
+
+    Genea.setSingleTag('HUSB', fam, newFamily, 'setHusband');
+    Genea.setSingleTag('WIFE', fam, newFamily, 'setWife');
+    Genea.setSingleTagN('CHIL', fam, newFamily, 'addChild');
+
+
+    Genea.addNote(fam, newFamily);
+
+    console.log(JSON.stringify(newFamily));
+    // console.log(newFamily);
+    return newFamily;
+  });
+  
+
+};
+Genea.addNote = function(inObject, outObject) {
+  object = Genea.getTagObject('NOTE', 'N', inObject);
+  if (object) {
+    object.forEach(function(object) {
+      var n = new Note.NoteStructure({});
+      var value = Genea.getFullValue(object);
+      if (value.search(/@.+@/) !== -1) {
+        n.setNoteRef(value);
+      } else {
+        n.setSubmitterText(value);
+      }
+      outObject.addNote(n);
+    });
+  }
 };
 Genea.setStructure = function(tag, inObject, outObject, subtags, typeString, type, method) {
   var object = Genea.getTagObject(tag.tag, 'N', inObject);
@@ -204,7 +241,8 @@ Genea.setStructure = function(tag, inObject, outObject, subtags, typeString, typ
         e[tag.f](value);
       }
       if (object.data.length !== 0) {
-        Genea.setMultipleValues(subtags, object, e);
+        Genea.setMultipleTags(subtags, object, e);
+        Genea.addNote(object, e);
       }
       outObject[method](e);
     });
@@ -214,16 +252,25 @@ Genea.setStructure = function(tag, inObject, outObject, subtags, typeString, typ
 Genea.setEvent = function(tag, object, person, subtags, type, event) {
   Genea.setStructure({tag: tag}, object, person, subtags, type, event, 'addEvent');
 };
-Genea.setMultipleValues = function(tags, object, e) {
+Genea.setMultipleTags = function(tags, object, e) {
   var object1;
   tags.forEach(function(sub) {
-    object1 = Genea.setSingleValue(sub.tag, object, e, sub.f);
+    object1 = Genea.setSingleTag(sub.tag, object, e, sub.f);
     if (sub.subtags) {
-      Genea.setMultipleValues(sub.subtags, object1, e);
+      Genea.setMultipleTags(sub.subtags, object1, e);
     }
   });
 };
-Genea.setSingleValue = function(tag, object, e, f) {
+Genea.setSingleTagN = function(tag, object, e, f) {
+  var object1 = Genea.getTagObject(tag, 'N', object);
+  if (object1) {
+    object1.forEach(function(object) {
+      e[f](Genea.getFullValue(object));
+    });
+  }
+  return object1;
+};
+Genea.setSingleTag = function(tag, object, e, f) {
   var object1 = Genea.getTagObject(tag, '1', object);
   if (object1) {
     e[f](Genea.getFullValue(object1));
@@ -241,16 +288,44 @@ Genea.getFullValue = function(object) {
     var returnValue = [];
     returnValue.push(object.value);
     while ((tag === 'CONT' || tag === 'CONC') && dat_ind < object.data.length) {
+      var value = object.data[dat_ind].value;
+      if (!value) {
+        value = '';
+      }
       if (tag === 'CONT') {
-        returnValue.push('\n' + object.data[dat_ind].value);
+        returnValue.push('\n' + value);
       } else {
-        returnValue.push(object.data[dat_ind].value);
+        returnValue.push(value);
       }
       dat_ind++;
       tag = (dat_ind < object.data.length) ? object.data[dat_ind].tag : '';
     }
     return returnValue.join('');
   }
+};
+Genea.parseName = function(name_string) {
+  var pos1 = name_string.search(/\//);
+  var name1 = null;
+  var name2 = null;
+  var name3 = null;
+  if (pos1 === -1) {
+    name1 = name_string;
+  } else {
+    var pos2 = name_string.substr(pos1 + 1).search(/\//);
+    if(pos1 > 0) {
+      name1 = name_string.substr(0, pos1 - 1);
+    }
+    name2 = name_string.substr(pos1 + 1, pos2);
+    var pos3 = pos1 + pos2;
+    if (pos3 + 2 < name_string.length) {
+      name3 = name_string.substr(pos2 + 1);
+    }
+  }
+  return new Name({
+    name1: name1,
+    name2: name2,
+    name3: name3
+  });
 };
 Genea.getTagObject = function(tag, type, tag_object) {
   var returnObject = [];

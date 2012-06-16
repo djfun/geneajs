@@ -64,6 +64,9 @@ Event.prototype.setCause = function(cause) {
 Event.prototype.setRestrictionNotice = function(restriction_notice) {
   this.restriction_notice = restriction_notice;
 };
+Event.prototype.addNote = function(e) {
+  this.notes.push(e);
+};
 
 var IndividualEvent = function(e) {
   Event.call(this, e);
