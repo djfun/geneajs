@@ -18,8 +18,11 @@
   position: absolute;
   
   border:1px black solid;
-  height: 120px;
-  width: 120px; 
+  padding: 5px;
+
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */
 
   -webkit-box-shadow: 6px 6px 5px lightgray;
   -moz-box-shadow: 6px 6px 5px lightgray;
@@ -39,4 +42,8 @@
   background-color:gray;
   height:1px;
   width:1px;
+}
+body {
+  font-family: sans-serif;
+  font-size: 0.75em;
 }

@@ -15,8 +15,10 @@
 */
 
 ChartHelper = {
-  height: 120,
-  width: 120,
+  height: 60,
+  width: 150,
+  spacing: 10,
+  spacing_v: 20,
   render: function(inAncestors, inDepth) {
 
     var left;
@@ -35,8 +37,8 @@ ChartHelper = {
     var ped_left_offset = pedigree.left_offset;
     
     // left value of element #1
-    left = Math.pow(2, inDepth - 1) * (ChartHelper.width + 10) -
-        (ChartHelper.width + 10) / 2;
+    left = Math.pow(2, inDepth - 1) * (ChartHelper.width + ChartHelper.spacing) -
+        (ChartHelper.width + ChartHelper.spacing) / 2;
 
     ped_data.forEach(function(dat, dat_ind, data) {
       dat.left+= left;
@@ -51,10 +53,10 @@ ChartHelper = {
     // line on top of element #1
     lines.push({
       left: left + (ChartHelper.width / 2),
-      top: -18,
+      top: -(ChartHelper.spacing_v - 2),
       data: {
         orientation: "vertical",
-        len: 18
+        len: (ChartHelper.spacing_v - 2)
       }
     });
     
@@ -62,7 +64,7 @@ ChartHelper = {
     lines = lines.concat(ped_lines);
 
     // space right of possible new elements to element #1
-    var right_space = ped_left_offset + 10;
+    var right_space = ped_left_offset + ChartHelper.spacing;
     
     // siblings1 (siblings left of element #1)
     if (inAncestors.siblings1) {
@@ -79,14 +81,14 @@ ChartHelper = {
     if (inAncestors.father_siblings) {
 
       // left value of the father of element #1
-      var father_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + 10) -
-        (ChartHelper.width + 10) / 2;
+      var father_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
+        (ChartHelper.width + ChartHelper.spacing) / 2;
       right_space-=(left - father_left);
-      if (right_space < 10) {
-        right_space = 10;
+      if (right_space < ChartHelper.spacing) {
+        right_space = ChartHelper.spacing;
       }
       returnObject = ChartHelper.renderPart(inAncestors.father_siblings,
-          father_left, -(ChartHelper.height + 40), right_space, 'right');
+          father_left, -(ChartHelper.height + (ChartHelper.spacing_v * 2)), right_space, 'right');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -96,7 +98,7 @@ ChartHelper = {
     
     // now the other side
     // we start with the same space here
-    var left_space = ped_right_offset + 10;
+    var left_space = ped_right_offset + ChartHelper.spacing;
     
     //siblings2 (siblings on the right)
     if (inAncestors.siblings2) {
@@ -111,15 +113,15 @@ ChartHelper = {
     // mother_siblings
     if (inAncestors.mother_siblings) {
       // left value of the mother of element #1
-      var mother_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + 10) -
-        (ChartHelper.width + 10) / 2 +
-        Math.pow(2, inDepth - 1) * (ChartHelper.width + 10);
+      var mother_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
+        (ChartHelper.width + ChartHelper.spacing) / 2 +
+        Math.pow(2, inDepth - 1) * (ChartHelper.width + ChartHelper.spacing);
       left_space-=(mother_left - left);
-      if (left_space < (ChartHelper.width + 10)) {
-        left_space = ChartHelper.width + 10;
+      if (left_space < (ChartHelper.width + ChartHelper.spacing)) {
+        left_space = ChartHelper.width + ChartHelper.spacing;
       }
       returnObject = ChartHelper.renderPart(inAncestors.mother_siblings,
-          mother_left, -(ChartHelper.height + 40), left_space, 'left');
+          mother_left, -(ChartHelper.height + (ChartHelper.spacing_v * 2)), left_space, 'left');
 
       data = data.concat(returnObject.data);
       lines = lines.concat(returnObject.lines);
@@ -158,29 +160,29 @@ ChartHelper = {
       var i = inDepth - arr_ind;
       arr.forEach(function(ancestor, ancestor_ind, ancestors) {
         if (ancestor.type !== "empty") {
-          var len = Math.pow(2, arr_ind - 1) * (ChartHelper.width + 10);
-          left = (arr_ind === 0) ? 0 + ancestor_ind * (ChartHelper.width + 10) :
-            Math.pow(2, arr_ind - 1) * (ChartHelper.width + 10) -
-            ((ChartHelper.width + 10) / 2) +
-            Math.pow(2, arr_ind) * (ChartHelper.width + 10) * ancestor_ind;
+          var len = Math.pow(2, arr_ind - 1) * (ChartHelper.width + ChartHelper.spacing);
+          left = (arr_ind === 0) ? 0 + ancestor_ind * (ChartHelper.width + ChartHelper.spacing) :
+            Math.pow(2, arr_ind - 1) * (ChartHelper.width + ChartHelper.spacing) -
+            ((ChartHelper.width + ChartHelper.spacing) / 2) +
+            Math.pow(2, arr_ind) * (ChartHelper.width + ChartHelper.spacing) * ancestor_ind;
           
           data.push({
             left: left,
-            top: -i * (ChartHelper.height + 40),
+            top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)),
             data: ancestor.data
           });
           lines.push({
             left: left + (ChartHelper.width / 2),
-            top: -i * (ChartHelper.height + 40) + (ChartHelper.height + 2),
+            top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) + (ChartHelper.height + 2),
             data: {
               orientation: "vertical",
-              len: 20
+              len: ChartHelper.spacing_v
             }
           });
           if (ancestor_ind % 2 === 0) {
             lines.push({
               left: left + (ChartHelper.width / 2),
-              top: -i * (ChartHelper.height + 40) + (ChartHelper.height + 22),
+              top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) + (ChartHelper.height + ChartHelper.spacing_v + 2),
               data: {
                 orientation: "horizontal",
                 len: len
@@ -189,7 +191,7 @@ ChartHelper = {
           } else {
             lines.push({
               left: left + (ChartHelper.width / 2) - len,
-              top: -i * (ChartHelper.height + 40) + (ChartHelper.height + 22),
+              top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) + (ChartHelper.height + ChartHelper.spacing_v + 2),
               data: {
                 orientation: "horizontal",
                 len: len
@@ -197,12 +199,14 @@ ChartHelper = {
             });
           }
           if (i !== inDepth) {
-            if (ancestor.father || ancestor.mother) {
+            if (ancestor.father || ancestor.mother ||
+                (ancestor_ind === 0 && inAncestors.father_siblings) ||
+                (ancestor_ind === 1 && inAncestors.mother_siblings)) {
               lines.push({
                 left: left + (ChartHelper.width / 2),
-                top: -i * (ChartHelper.height + 40) - 18,
+                top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) - (ChartHelper.spacing_v - 2),
                 data: {
-                  orientation: "vertical", len: 18
+                  orientation: "vertical", len: (ChartHelper.spacing_v - 2)
                 }
               });
             }
@@ -237,7 +241,7 @@ ChartHelper = {
         line.left+= new_left;
         line.top+= inTop;
       });
-      inSpace+= (ChartHelper.width + 10) * ped.data[0].maxWidth;
+      inSpace+= (ChartHelper.width + ChartHelper.spacing) * ped.data[0].maxWidth;
 
       var len = direction === 'left' ? new_left - inLeft : inLeft - new_left;
       var hor_line_left = direction === 'left' ?
@@ -246,15 +250,15 @@ ChartHelper = {
       
       ped_lines.push({
         left: new_left + (ChartHelper.width / 2),
-        top: -18 + inTop,
+        top: -(ChartHelper.spacing_v - 2) + inTop,
         data: {
           orientation: "vertical",
-          len: 18
+          len: (ChartHelper.spacing_v - 2)
         }
       });
       ped_lines.push({
         left: hor_line_left,
-        top: -18 + inTop,
+        top: -(ChartHelper.spacing_v - 2) + inTop,
         data: {
           orientation: "horizontal",
           len: len
@@ -276,7 +280,9 @@ ChartHelper = {
 
     data.forEach(function(dat, dat_ind, data) {
       var gender = dat.data.gender ? dat.data.gender : 'unknown';
-      returnData+="<div class='data_node gender_" + gender + "' style='top:" + dat.top + "px; left:" + dat.left + "px;'>" + dat.data.name + "</div>";
+      returnData+="<div class='data_node gender_" + gender + "' style='top:" + dat.top + "px; " +
+         "left:" + dat.left + "px; height:" + ChartHelper.height + "px; " +
+         "width:" + ChartHelper.width + "px;'>" + dat.data.name + "</div>";
     });
 
     lines.forEach(function(line, line_ind, lines) {
@@ -320,7 +326,7 @@ ChartHelper = {
     
     ChartHelper.preOrder(pedigree, function(inElement) {
       // center the element
-      inElement.left+=((ChartHelper.width + 10)*inElement.maxWidth)/2;
+      inElement.left+=((ChartHelper.width + ChartHelper.spacing)*inElement.maxWidth)/2;
       data.push(inElement);
     });
 
@@ -330,8 +336,8 @@ ChartHelper = {
       if (dat.spouses) {
         if (dat.spouses.length === 1) {
           dat.spouses[0].top = dat.top;
-          dat.spouses[0].left = dat.left + ((ChartHelper.width + 10) / 2);
-          dat.left = dat.spouses[0].left - (ChartHelper.width + 10);
+          dat.spouses[0].left = dat.left + ((ChartHelper.width + ChartHelper.spacing) / 2);
+          dat.left = dat.spouses[0].left - (ChartHelper.width + ChartHelper.spacing);
           spouses_data.push(dat.spouses[0]);
           var width = 0;
             if (dat.spouses[0].children) {
@@ -344,7 +350,7 @@ ChartHelper = {
             width = Math.max(2, width);
             dat.spouses[0].width = width;
         } else {
-          dat.left-=((ChartHelper.width + 10) * dat.maxWidth)/2;
+          dat.left-=((ChartHelper.width + ChartHelper.spacing) * dat.maxWidth)/2;
           var width00 = 0;
           dat.spouses.forEach(function(spouse, spouse_ind, spouses) {
             spouse.top = dat.top;
@@ -361,28 +367,28 @@ ChartHelper = {
             }
             spouse.width = width;
             spouse.left = dat.left +
-                (ChartHelper.width + 10) * ((width / 2) + width00);
+                (ChartHelper.width + ChartHelper.spacing) * ((width / 2) + width00);
             width00+=width;
 
             spouses_data.push(spouse);
           });
 
-          dat.spouses[0].left+= ((ChartHelper.width + 10) / 2);
-          dat.left = dat.spouses[0].left - (ChartHelper.width + 10);
+          dat.spouses[0].left+= ((ChartHelper.width + ChartHelper.spacing) / 2);
+          dat.left = dat.spouses[0].left - (ChartHelper.width + ChartHelper.spacing);
           dat.width00 = width00;
         }
       }
     });
     if (inPedigree.spouses) {
       if (inPedigree.spouses.length === 1) {
-        left_offset = (data[0].spouses[0].width * (ChartHelper.width + 10) / 2 - 5) -
-            (ChartHelper.width + 5);
-        right_offset = (data[0].spouses[0].width * (ChartHelper.width + 10) / 2 - 5) +
-            (ChartHelper.width + 5);
+        left_offset = (data[0].spouses[0].width * (ChartHelper.width + ChartHelper.spacing) / 2 - (ChartHelper.spacing / 2)) -
+            (ChartHelper.width + (ChartHelper.spacing / 2));
+        right_offset = (data[0].spouses[0].width * (ChartHelper.width + ChartHelper.spacing) / 2 - (ChartHelper.spacing / 2)) +
+            (ChartHelper.width + (ChartHelper.spacing / 2));
       } else {
-        left_offset = (data[0].spouses[0].width * (ChartHelper.width + 10) / 2 - 5) -
-            (ChartHelper.width + 5);
-        right_offset = data[0].width00 * (ChartHelper.width + 10) - 10 - left_offset;
+        left_offset = (data[0].spouses[0].width * (ChartHelper.width + ChartHelper.spacing) / 2 - (ChartHelper.spacing / 2)) -
+            (ChartHelper.width + (ChartHelper.spacing / 2));
+        right_offset = data[0].width00 * (ChartHelper.width + ChartHelper.spacing) - ChartHelper.spacing - left_offset;
       }
     } else {
       right_offset = ChartHelper.width;
@@ -405,7 +411,7 @@ ChartHelper = {
               top: inElement.top + ChartHelper.height + 2,
               data: {
                 orientation: "vertical",
-                len: 20
+                len: ChartHelper.spacing_v
               }
             });
 
@@ -414,21 +420,21 @@ ChartHelper = {
               top: spouse.top + ChartHelper.height + 2,
               data: {
                 orientation: "vertical",
-                len: 20
+                len: ChartHelper.spacing_v
               }
             });
             spouse.children.forEach(function(child, child_ind, children) {
               lines.push({
                 left: child.left + (ChartHelper.width / 2),
-                top: child.top - 18,
+                top: child.top - (ChartHelper.spacing_v - 2),
                 data: {
                   orientation: "vertical",
-                  len: 18
+                  len: (ChartHelper.spacing_v - 2)
                 }
               });
               if (child_ind === 0) {
                 left1 = child.left + (ChartHelper.width / 2);
-                top = child.top - 18;
+                top = child.top - (ChartHelper.spacing_v - 2);
               }
               if (child_ind === children.length - 1) {
                 len = (child.left + (ChartHelper.width / 2)) - left1;
@@ -449,7 +455,7 @@ ChartHelper = {
                 top: top,
                 data: {
                   orientation: "horizontal",
-                  len: ChartHelper.width + 10
+                  len: ChartHelper.width + ChartHelper.spacing
                 }
               });
             }
@@ -482,8 +488,8 @@ ChartHelper = {
     var returnSpouses = [];
 
     var moveElement = function (inElement) {
-      inElement.left+= (ChartHelper.width + 10) * maxWidth;
-      inElement.top+= ChartHelper.height + 40;
+      inElement.left+= (ChartHelper.width + ChartHelper.spacing) * maxWidth;
+      inElement.top+= ChartHelper.height + (ChartHelper.spacing_v * 2);
     };
 
     if (!inPedigree.spouses) {
