@@ -1,1 +1,1 @@
-document.write(ChartHelper.render(myTree, 4));
+document.write(ChartHelper.render(myTree, 3));
