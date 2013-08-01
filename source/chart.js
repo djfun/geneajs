@@ -19,6 +19,7 @@ ChartHelper = {
   width: 150,
   spacing: 10,
   spacing_v: 20,
+  margin: 200,
   render: function(inAncestors, inDepth, inTemplate) {
 
     var left;
@@ -316,6 +317,8 @@ ChartHelper = {
 
     handlebarsTemplate = Handlebars.compile(inTemplate);
 
+    returnData+="<div class='chart_canvas' style='width: " + d.width + "px; height: " + d.height + "px;'>";
+
     data.forEach(function(dat, dat_ind, data) {
       var gender = dat.data.gender ? dat.data.gender : 'unknown';
       returnData+="<div class='data_node gender_" + gender + "' style='top:" + dat.top + "px; " +
@@ -327,6 +330,9 @@ ChartHelper = {
       var length_css = line.data.orientation === "horizontal" ? "width: " + line.data.len + "px" : "height: " + line.data.len + "px";
       returnData+="<div class='line' style='top:" + line.top + "px; left:" + line.left + "px; " + length_css + "'>&nbsp;</div>";
     });
+
+    returnData+"</div>";
+
     return returnData;
   },
   normalize: function(inData, inLines) {
@@ -336,6 +342,9 @@ ChartHelper = {
     var mostNegativeTop = Math.min.apply(Math, inData.map(function(dat) {
       return dat.top;
     }));
+
+    mostNegativeLeft-=ChartHelper.margin;
+    mostNegativeTop-=ChartHelper.margin;
 
     var returnData = inData.map(function(dat) {
       return {
@@ -351,7 +360,18 @@ ChartHelper = {
         data: line.data
       };
     });
-    return {data: returnData, lines: returnLines};
+
+    var mostPositiveLeft = Math.max.apply(Math, returnData.map(function(dat) {
+      return dat.left;
+    }));
+    var mostPositiveTop = Math.max.apply(Math, returnData.map(function(dat) {
+      return dat.top;
+    }));
+
+    var height = mostPositiveTop + ChartHelper.height + ChartHelper.margin;
+    var width = mostPositiveLeft + ChartHelper.width + ChartHelper.margin;
+
+    return {data: returnData, lines: returnLines, height: height, width: width};
   },
   renderPedigree: function(inPedigree) {
     
