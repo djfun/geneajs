@@ -37,9 +37,11 @@ ChartHelper = {
     var ped_left_offset = pedigree.left_offset;
     
     // left value of element #1
+    // (half the width of ancestor tree minus half of element width)
     left = Math.pow(2, inDepth - 1) * (ChartHelper.width + ChartHelper.spacing) -
         (ChartHelper.width + ChartHelper.spacing) / 2;
 
+    // add that left value to each element from pedigree
     ped_data.forEach(function(dat, dat_ind, data) {
       dat.left+= left;
       dat.top+= 0;
@@ -81,12 +83,17 @@ ChartHelper = {
     if (inAncestors.father_siblings) {
 
       // left value of the father of element #1
+      // (half the width of ancestor tree of father minus half of element width)
       var father_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
         (ChartHelper.width + ChartHelper.spacing) / 2;
+
+      // space right of possible new elements to father of element #1
       right_space-=(left - father_left);
+      // minimum is value of spacing
       if (right_space < ChartHelper.spacing) {
         right_space = ChartHelper.spacing;
       }
+      // inTop for renderPart is negative height of elements plus spacing (relative to top of element #1)
       returnObject = ChartHelper.renderPart(inAncestors.father_siblings,
           father_left, -(ChartHelper.height + (ChartHelper.spacing_v * 2)), right_space, 'right');
 
@@ -113,13 +120,19 @@ ChartHelper = {
     // mother_siblings
     if (inAncestors.mother_siblings) {
       // left value of the mother of element #1
+      // (half the width of ancestor tree of mother minus half of element width => left value of father
+      // plus half of the width of ancestor tree of element #1)
       var mother_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
         (ChartHelper.width + ChartHelper.spacing) / 2 +
         Math.pow(2, inDepth - 1) * (ChartHelper.width + ChartHelper.spacing);
+
+      // space left of possible new elements to mother of element #1
       left_space-=(mother_left - left);
+      // minimum is again value of spacing
       if (left_space < (ChartHelper.width + ChartHelper.spacing)) {
         left_space = ChartHelper.width + ChartHelper.spacing;
       }
+      // inTop for renderPart is the same as for father_siblings
       returnObject = ChartHelper.renderPart(inAncestors.mother_siblings,
           mother_left, -(ChartHelper.height + (ChartHelper.spacing_v * 2)), left_space, 'left');
 
@@ -133,6 +146,7 @@ ChartHelper = {
     var ancestors = new Array(inDepth);
     ancestors[0] = [inAncestors];
 
+    // put ancestors in array of arrays
     ancestors.forEach(function(arr, arr_ind, ancestors) {
       var levelAncestors = [];
       arr.forEach(function(ancestor, ancestor_ind, acestors) {
@@ -154,23 +168,35 @@ ChartHelper = {
     var data = [];
     var lines = [];
 
+    // ancestors begins now with topmost level
     ancestors.reverse();
+    
+    // don't use level with element #1 (was only needed for building the array)
     ancestors.pop();
+
+    // for each level...
     ancestors.forEach(function(arr, arr_ind, ancestors) {
+      // i goes from inDepth to 1
       var i = inDepth - arr_ind;
+      // for each element on this level...
       arr.forEach(function(ancestor, ancestor_ind, ancestors) {
         if (ancestor.type !== "empty") {
+          // length of horizontal lines
+          // (half the width of ancestor tree of current element)
           var len = Math.pow(2, arr_ind - 1) * (ChartHelper.width + ChartHelper.spacing);
-          left = (arr_ind === 0) ? 0 + ancestor_ind * (ChartHelper.width + ChartHelper.spacing) :
-            Math.pow(2, arr_ind - 1) * (ChartHelper.width + ChartHelper.spacing) -
-            ((ChartHelper.width + ChartHelper.spacing) / 2) +
-            Math.pow(2, arr_ind) * (ChartHelper.width + ChartHelper.spacing) * ancestor_ind;
+
+          // (half the width of ancestor tree of current element
+          // minus half of element width
+          // plus full width of ancestor tree of current element times the position on the level)
+          left = (ChartHelper.width + ChartHelper.spacing) *
+            (Math.pow(2, arr_ind - 1) - 0.5 + Math.pow(2, arr_ind) * ancestor_ind);
           
           data.push({
             left: left,
             top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)),
             data: ancestor.data
           });
+          // vertical line on bottom current element
           lines.push({
             left: left + (ChartHelper.width / 2),
             top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) + (ChartHelper.height + 2),
@@ -180,6 +206,7 @@ ChartHelper = {
             }
           });
           if (ancestor_ind % 2 === 0) {
+            // horizontal line for male ancestors (left)
             lines.push({
               left: left + (ChartHelper.width / 2),
               top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) + (ChartHelper.height + ChartHelper.spacing_v + 2),
@@ -189,6 +216,7 @@ ChartHelper = {
               }
             });
           } else {
+            // horizontal line for female ancestors (right)
             lines.push({
               left: left + (ChartHelper.width / 2) - len,
               top: -i * (ChartHelper.height + (ChartHelper.spacing_v * 2)) + (ChartHelper.height + ChartHelper.spacing_v + 2),
@@ -198,6 +226,9 @@ ChartHelper = {
               }
             });
           }
+          // vertical line on top of current element
+          // when not on top level and when there is at least one ancestor for this element
+          // or for father and mother of element #1 if there are siblings of them
           if (i !== inDepth) {
             if (ancestor.father || ancestor.mother ||
                 (ancestor_ind === 0 && inAncestors.father_siblings) ||

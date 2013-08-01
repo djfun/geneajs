@@ -276,5 +276,13 @@ exports.testPositionsFullTree = function(test) {
   test.equal(ChartHelper.width * 4 + ChartHelper.spacing * 4, getElementByRef(data, 0).left - getElementByRef(data, 7).left, 
     "Position of parents is not correct");
 
+
+  test.equal(0, getElementByRef(data, 3).top - getElementByRef(data, 2).top, "Gread-grandparents do not have the same vertical position");
+  test.equal(0, getElementByRef(data, 3).top - getElementByRef(data, 5).top, "Gread-grandparents do not have the same vertical position");
+
+  test.equal(0, getElementByRef(data, 8).top - getElementByRef(data, 11).top, "Grandparents do not have the same vertical position");
+
+  test.equal(0, getElementByRef(data, 7).top - getElementByRef(data, 0).top, "Parents do not have the same vertical position");
+
   test.done();
 };
