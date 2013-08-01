@@ -19,12 +19,17 @@ ChartHelper = {
   width: 150,
   spacing: 10,
   spacing_v: 20,
-  render: function(inAncestors, inDepth) {
+  render: function(inAncestors, inDepth, inTemplate) {
 
     var left;
     var returnObject;
     var data = [];
     var lines = [];
+
+    // default template
+    if (!inTemplate) {
+      inTemplate = "{{name}}";
+    }
 
     returnObject = ChartHelper.renderAncestors(inAncestors, inDepth);
     data = data.concat(returnObject.data);
@@ -140,7 +145,7 @@ ChartHelper = {
       lines = lines.concat(returnObject.lines);
     }
     
-    return ChartHelper.draw(data, lines);
+    return ChartHelper.draw(data, lines, inTemplate);
   },
   renderAncestors: function(inAncestors, inDepth) {
     var ancestors = new Array(inDepth);
@@ -302,18 +307,20 @@ ChartHelper = {
 
     return {data: return_data, lines: return_lines, space: inSpace};
   },
-  draw: function(inData, inLines) {
+  draw: function(inData, inLines, inTemplate) {
     var returnData = "";
     
     var d = ChartHelper.normalize(inData, inLines);
     var data = d.data;
     var lines = d.lines;
 
+    handlebarsTemplate = Handlebars.compile(inTemplate);
+
     data.forEach(function(dat, dat_ind, data) {
       var gender = dat.data.gender ? dat.data.gender : 'unknown';
       returnData+="<div class='data_node gender_" + gender + "' style='top:" + dat.top + "px; " +
          "left:" + dat.left + "px; height:" + ChartHelper.height + "px; " +
-         "width:" + ChartHelper.width + "px;'>" + dat.data.name + "</div>";
+         "width:" + ChartHelper.width + "px;'>" + handlebarsTemplate(dat.data) + "</div>";
     });
 
     lines.forEach(function(line, line_ind, lines) {
