@@ -43,7 +43,7 @@ exports.testFatherWithSiblingsButWithoutAncestors = function(test) {
   };
   var returnObject = ChartHelper.renderAncestors(ancestors, 2);
   // console.log(JSON.stringify(returnObject));
-  test.equal(2, countVerticalLines(returnObject.lines), "Ancestor chart with father and his siblings doesn't have correct amount of vertical lines");
+  test.equal(countVerticalLines(returnObject.lines), 2, "Ancestor chart with father and his siblings doesn't have correct amount of vertical lines");
   test.done();
 };
 
@@ -83,7 +83,7 @@ exports.testFatherWithSiblingsAndAncestors = function(test) {
     }
   };
   var returnObject = ChartHelper.renderAncestors(ancestors, 2);
-  test.equal(4, countVerticalLines(returnObject.lines), "Ancestor chart with father, his siblings and ancestors doesn't have correct amount of vertical lines");
+  test.equal(countVerticalLines(returnObject.lines), 4, "Ancestor chart with father, his siblings and ancestors doesn't have correct amount of vertical lines");
   test.done();
 };
 
@@ -112,7 +112,7 @@ exports.testMotherWithSiblingsButWithoutAncestors = function(test) {
   };
   var returnObject = ChartHelper.renderAncestors(ancestors, 2);
   // console.log(JSON.stringify(returnObject));
-  test.equal(2, countVerticalLines(returnObject.lines), "Ancestor chart with mother and her siblings doesn't have correct amount of vertical lines");
+  test.equal(countVerticalLines(returnObject.lines), 2, "Ancestor chart with mother and her siblings doesn't have correct amount of vertical lines");
   test.done();
 };
 
@@ -152,7 +152,7 @@ exports.testMotherWithSiblingsAndAncestors = function(test) {
     }
   };
   var returnObject = ChartHelper.renderAncestors(ancestors, 2);
-  test.equal(4, countVerticalLines(returnObject.lines), "Ancestor chart with mother, her siblings and ancestors doesn't have correct amount of vertical lines");
+  test.equal(countVerticalLines(returnObject.lines), 4, "Ancestor chart with mother, her siblings and ancestors doesn't have correct amount of vertical lines");
   test.done();
 };
 
@@ -259,30 +259,30 @@ exports.testPositionsFullTree = function(test) {
   };
   var returnObject = ChartHelper.renderAncestors(ancestors, 3);
   var data = returnObject.data;
-  test.equal(ChartHelper.width + ChartHelper.spacing, getElementByRef(data, 3).left - getElementByRef(data, 2).left, 
+  test.equal(getElementByRef(data, 3).left - getElementByRef(data, 2).left, ChartHelper.width + ChartHelper.spacing, 
     "Position of parents of father of mother is not correct");
-  test.equal(ChartHelper.width + ChartHelper.spacing, getElementByRef(data, 6).left - getElementByRef(data, 5).left,
+  test.equal(getElementByRef(data, 6).left - getElementByRef(data, 5).left, ChartHelper.width + ChartHelper.spacing, 
     "Position of parents of mother of mother is not correct");
-  test.equal(ChartHelper.width + ChartHelper.spacing, getElementByRef(data, 10).left - getElementByRef(data, 9).left, 
+  test.equal(getElementByRef(data, 10).left - getElementByRef(data, 9).left, ChartHelper.width + ChartHelper.spacing, 
     "Position of parents of father of father is not correct");
-  test.equal(ChartHelper.width + ChartHelper.spacing, getElementByRef(data, 13).left - getElementByRef(data, 12).left,
+  test.equal(getElementByRef(data, 13).left - getElementByRef(data, 12).left, ChartHelper.width + ChartHelper.spacing, 
     "Position of parents of mother of father is not correct");
 
-  test.equal(ChartHelper.width * 2 + ChartHelper.spacing * 2, getElementByRef(data, 4).left - getElementByRef(data, 1).left, 
+  test.equal(getElementByRef(data, 4).left - getElementByRef(data, 1).left, ChartHelper.width * 2 + ChartHelper.spacing * 2, 
     "Position of parents of mother is not correct");
-  test.equal(ChartHelper.width * 2 + ChartHelper.spacing * 2, getElementByRef(data, 11).left - getElementByRef(data, 8).left, 
+  test.equal(getElementByRef(data, 11).left - getElementByRef(data, 8).left, ChartHelper.width * 2 + ChartHelper.spacing * 2, 
     "Position of parents of mother is not correct");
 
-  test.equal(ChartHelper.width * 4 + ChartHelper.spacing * 4, getElementByRef(data, 0).left - getElementByRef(data, 7).left, 
+  test.equal(getElementByRef(data, 0).left - getElementByRef(data, 7).left, ChartHelper.width * 4 + ChartHelper.spacing * 4, 
     "Position of parents is not correct");
 
 
-  test.equal(0, getElementByRef(data, 3).top - getElementByRef(data, 2).top, "Gread-grandparents do not have the same vertical position");
-  test.equal(0, getElementByRef(data, 3).top - getElementByRef(data, 5).top, "Gread-grandparents do not have the same vertical position");
+  test.equal(getElementByRef(data, 3).top - getElementByRef(data, 2).top, 0, "Gread-grandparents do not have the same vertical position");
+  test.equal(getElementByRef(data, 3).top - getElementByRef(data, 5).top, 0, "Gread-grandparents do not have the same vertical position");
 
-  test.equal(0, getElementByRef(data, 8).top - getElementByRef(data, 11).top, "Grandparents do not have the same vertical position");
+  test.equal(getElementByRef(data, 8).top - getElementByRef(data, 11).top, 0, "Grandparents do not have the same vertical position");
 
-  test.equal(0, getElementByRef(data, 7).top - getElementByRef(data, 0).top, "Parents do not have the same vertical position");
+  test.equal(getElementByRef(data, 7).top - getElementByRef(data, 0).top, 0, "Parents do not have the same vertical position");
 
   test.done();
 };
