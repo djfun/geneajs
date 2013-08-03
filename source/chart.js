@@ -253,15 +253,19 @@ ChartHelper = {
     });
     return {data: data, lines: lines};
   },
+  // prepares parts of the full tree (siblings and their descendants)
+  // and renders them with renderPedigree
   renderPart: function(inElements, inLeft, inTop, inSpace, direction) {
     var return_data = [];
     var return_lines = [];
+    // for each element
     inElements.forEach(function(element, element_ind, elements) {
       var ped = ChartHelper.renderPedigree(element);
       var ped_data = ped.data;
       var ped_lines = ped.lines;
       var ped_left_offset = ped.left_offset;
       var ped_right_offset = ped.right_offset;
+      // direction specifies where the reference person is relative to the part
       if (direction === 'left') {
         new_left = inLeft + inSpace +
             ped_left_offset;
@@ -293,6 +297,7 @@ ChartHelper = {
           len: (ChartHelper.spacing_v - 2)
         }
       });
+      // horizontal line on top of element to connect to other elements of the part or the reference person
       ped_lines.push({
         left: hor_line_left,
         top: -(ChartHelper.spacing_v - 2) + inTop,
@@ -311,14 +316,18 @@ ChartHelper = {
   draw: function(inData, inLines, inTemplate) {
     var returnData = "";
     
+    // normalize top and left values to get rid of negative values
     var d = ChartHelper.normalize(inData, inLines);
     var data = d.data;
     var lines = d.lines;
 
+    // prepare the handlebars template
     handlebarsTemplate = Handlebars.compile(inTemplate);
 
+    // div which has the size of the whole tree with ChartHelper.margin on each side
     returnData+="<div class='chart_canvas' style='width: " + d.width + "px; height: " + d.height + "px;'>";
 
+    // create html for each data element
     data.forEach(function(dat, dat_ind, data) {
       var gender = dat.data.gender ? dat.data.gender : 'unknown';
       returnData+="<div class='data_node gender_" + gender + "' style='top:" + dat.top + "px; " +
@@ -326,6 +335,7 @@ ChartHelper = {
          "width:" + ChartHelper.width + "px;'>" + handlebarsTemplate(dat.data) + "</div>";
     });
 
+    // create html for each line
     lines.forEach(function(line, line_ind, lines) {
       var length_css = line.data.orientation === "horizontal" ? "width: " + line.data.len + "px" : "height: " + line.data.len + "px";
       returnData+="<div class='line' style='top:" + line.top + "px; left:" + line.left + "px; " + length_css + "'>&nbsp;</div>";
@@ -336,6 +346,7 @@ ChartHelper = {
     return returnData;
   },
   normalize: function(inData, inLines) {
+    // find the lowest negative numbers
     var mostNegativeLeft = Math.min.apply(Math, inData.map(function(dat) {
       return dat.left;
     }));
@@ -343,9 +354,11 @@ ChartHelper = {
       return dat.top;
     }));
 
+    // subtract the margin
     mostNegativeLeft-=ChartHelper.margin;
     mostNegativeTop-=ChartHelper.margin;
 
+    // make all numbers positive with the information collected above
     var returnData = inData.map(function(dat) {
       return {
         left: dat.left - mostNegativeLeft,
@@ -361,6 +374,7 @@ ChartHelper = {
       };
     });
 
+    // find highest numbers
     var mostPositiveLeft = Math.max.apply(Math, returnData.map(function(dat) {
       return dat.left;
     }));
@@ -368,6 +382,7 @@ ChartHelper = {
       return dat.top;
     }));
 
+    // calculate height and width of the whole tree
     var height = mostPositiveTop + ChartHelper.height + ChartHelper.margin;
     var width = mostPositiveLeft + ChartHelper.width + ChartHelper.margin;
 
