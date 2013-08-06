@@ -35,6 +35,7 @@ ChartHelper = {
     returnObject = ChartHelper.renderAncestors(inAncestors, inDepth);
     data = data.concat(returnObject.data);
     lines = lines.concat(returnObject.lines);
+    actualDepth = returnObject.actualDepth;
 
     var pedigree = ChartHelper.renderPedigree(inAncestors.pedigree);
     var ped_data = pedigree.data;
@@ -44,7 +45,7 @@ ChartHelper = {
     
     // left value of element #1
     // (half the width of ancestor tree minus half of element width)
-    left = Math.pow(2, inDepth - 1) * (ChartHelper.width + ChartHelper.spacing) -
+    left = Math.pow(2, actualDepth - 1) * (ChartHelper.width + ChartHelper.spacing) -
         (ChartHelper.width + ChartHelper.spacing) / 2;
 
     // add that left value to each element from pedigree
@@ -90,7 +91,7 @@ ChartHelper = {
 
       // left value of the father of element #1
       // (half the width of ancestor tree of father minus half of element width)
-      var father_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
+      var father_left = Math.pow(2, actualDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
         (ChartHelper.width + ChartHelper.spacing) / 2;
 
       // space right of possible new elements to father of element #1
@@ -128,9 +129,9 @@ ChartHelper = {
       // left value of the mother of element #1
       // (half the width of ancestor tree of mother minus half of element width => left value of father
       // plus half of the width of ancestor tree of element #1)
-      var mother_left = Math.pow(2, inDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
+      var mother_left = Math.pow(2, actualDepth - 2) * (ChartHelper.width + ChartHelper.spacing) -
         (ChartHelper.width + ChartHelper.spacing) / 2 +
-        Math.pow(2, inDepth - 1) * (ChartHelper.width + ChartHelper.spacing);
+        Math.pow(2, actualDepth - 1) * (ChartHelper.width + ChartHelper.spacing);
 
       // space left of possible new elements to mother of element #1
       left_space-=(mother_left - left);
@@ -151,28 +152,50 @@ ChartHelper = {
   renderAncestors: function(inAncestors, inDepth) {
     var ancestors = new Array(inDepth);
     ancestors[0] = [inAncestors];
+    var actualDepth;
+    var depthFound = false;
 
     // put ancestors in array of arrays
     ancestors.forEach(function(arr, arr_ind, ancestors) {
       var levelAncestors = [];
+      var emptyLevel = true;
       arr.forEach(function(ancestor, ancestor_ind, acestors) {
         if (ancestor.father) {
           levelAncestors.push(ancestor.father);
+          emptyLevel = false;
         } else {
           levelAncestors.push({type: "empty"});
         }
         if (ancestor.mother) {
           levelAncestors.push(ancestor.mother);
+          emptyLevel = false;
         } else {
           levelAncestors.push({type: "empty"});
         }
       });
+      if (!depthFound && emptyLevel) {
+        actualDepth = arr_ind;
+        depthFound = true;
+      }
       ancestors[arr_ind + 1] = levelAncestors;
     });
+
+    if (!actualDepth) {
+      actualDepth = inDepth;
+    }
+
+    // if mother_siblings or father_siblings is set, actualDepth has to be at least 2
+    if ((inAncestors.mother_siblings || inAncestors.father_siblings) && actualDepth < 2) {
+      actualDepth = 2;
+    }
       
     
     var data = [];
     var lines = [];
+
+    for (var j = inDepth; j > actualDepth; j--) {
+      ancestors.pop();
+    }
 
     // ancestors begins now with topmost level
     ancestors.reverse();
@@ -182,8 +205,8 @@ ChartHelper = {
 
     // for each level...
     ancestors.forEach(function(arr, arr_ind, ancestors) {
-      // i goes from inDepth to 1
-      var i = inDepth - arr_ind;
+      // i goes from actualDepth to 1
+      var i = actualDepth - arr_ind;
       // for each element on this level...
       arr.forEach(function(ancestor, ancestor_ind, ancestors) {
         if (ancestor.type !== "empty") {
@@ -235,7 +258,7 @@ ChartHelper = {
           // vertical line on top of current element
           // when not on top level and when there is at least one ancestor for this element
           // or for father and mother of element #1 if there are siblings of them
-          if (i !== inDepth) {
+          if (i !== actualDepth) {
             if (ancestor.father || ancestor.mother ||
                 (ancestor_ind === 0 && inAncestors.father_siblings) ||
                 (ancestor_ind === 1 && inAncestors.mother_siblings)) {
@@ -251,7 +274,7 @@ ChartHelper = {
         }
       });
     });
-    return {data: data, lines: lines};
+    return {data: data, lines: lines, actualDepth: actualDepth};
   },
   // prepares parts of the full tree (siblings and their descendants)
   // and renders them with renderPedigree
@@ -327,6 +350,12 @@ ChartHelper = {
     // div which has the size of the whole tree with ChartHelper.margin on each side
     returnData+="<div class='chart_canvas' style='width: " + d.width + "px; height: " + d.height + "px;'>";
 
+    // create html for each line
+    lines.forEach(function(line, line_ind, lines) {
+      var length_css = line.data.orientation === "horizontal" ? "width: " + line.data.len + "px" : "height: " + line.data.len + "px";
+      returnData+="<div class='line' style='top:" + line.top + "px; left:" + line.left + "px; " + length_css + "'>&nbsp;</div>";
+    });
+
     // create html for each data element
     data.forEach(function(dat, dat_ind, data) {
       var gender = dat.data.gender ? dat.data.gender : 'unknown';
@@ -335,13 +364,7 @@ ChartHelper = {
          "width:" + ChartHelper.width + "px;'>" + handlebarsTemplate(dat.data) + "</div>";
     });
 
-    // create html for each line
-    lines.forEach(function(line, line_ind, lines) {
-      var length_css = line.data.orientation === "horizontal" ? "width: " + line.data.len + "px" : "height: " + line.data.len + "px";
-      returnData+="<div class='line' style='top:" + line.top + "px; left:" + line.left + "px; " + length_css + "'>&nbsp;</div>";
-    });
-
-    returnData+"</div>";
+    returnData+="</div>";
 
     return returnData;
   },
@@ -523,8 +546,14 @@ ChartHelper = {
             });
 
             if (spouse.children.length === 1 && spouse_ind === 0) {
+              var left_compensate = 0;
+              // because we gave single children a width of 2 to center them relative to their parents..
+              if (!spouse.children[0].spouses) {
+                left_compensate = ((ChartHelper.width + ChartHelper.spacing) / 2);
+              }
+
               lines.push({
-                left: left1,
+                left: left1 - left_compensate,
                 top: top,
                 data: {
                   orientation: "horizontal",
@@ -532,6 +561,17 @@ ChartHelper = {
                 }
               });
             }
+          }
+          // draw additional lines, if there is more than one spouse
+          if (spouse_ind > 0) {
+            lines.push({
+              left: inElement.left + ChartHelper.width,
+              top: inElement.top + (ChartHelper.height / 2),
+              data: {
+                orientation: "horizontal",
+                len: spouse.left - (inElement.left + ChartHelper.width)
+              }
+            });
           }
         });
       }
@@ -569,7 +609,7 @@ ChartHelper = {
       return {left: 0, top: 0, maxWidth: 1, data: inPedigree.data};
     } else {
       inPedigree.spouses.forEach(function(spouse, spouse_ind, spouses) {
-        if (!spouse.children) {
+        if (!spouse.children || spouse.children.length === 0) {
           maxWidth+= 1;
           if (spouse_ind === 0) {
             maxWidth+= 1;
@@ -590,6 +630,8 @@ ChartHelper = {
                 spouse.children.length === 1 &&
                 currentChild.maxWidth === 1) {
               maxWidth+= 1;
+              // set maxWidth of only child to 2 instead of 1 to center the element
+              currentChild.maxWidth = 2;
             }
           });
 

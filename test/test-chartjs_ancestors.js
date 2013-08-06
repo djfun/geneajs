@@ -286,3 +286,26 @@ exports.testPositionsFullTree = function(test) {
 
   test.done();
 };
+
+exports.testDepthOfTree = function(test) {
+  var ancestors = {
+    mother: {
+      data: {
+        name: "Mother",
+        gender: "female",
+        ref: 0
+      }
+    },
+    father: {
+      data: {
+        name: "Father",
+        gender: "male",
+        ref: 1
+      }
+    }
+  };
+  var returnObject = ChartHelper.renderAncestors(ancestors, 5);
+  test.equal(getElementByRef(returnObject.data, 0).left - getElementByRef(returnObject.data, 1).left - ChartHelper.width, ChartHelper.spacing,
+    "Spacing between parents is not ChartHelper.spacing");
+  test.done();
+};
