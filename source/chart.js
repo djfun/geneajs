@@ -533,7 +533,12 @@ ChartHelper = {
                 top = child.top - (ChartHelper.spacing_v - 2);
               }
               if (child_ind === children.length - 1) {
-                len = (child.left + (ChartHelper.width / 2)) - left1;
+                if (child.left < spouse.left) {
+                  // see test case "testTwoChildrenOneWithSpouse"
+                  len = (spouse.left + (ChartHelper.width / 2)) - left1;
+                } else {
+                  len = (child.left + (ChartHelper.width / 2)) - left1;
+                }
               }
             });
             lines.push({
