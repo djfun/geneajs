@@ -60,14 +60,18 @@ ChartHelper = {
     });
 
     // line on top of element #1
-    lines.push({
-      left: left + (ChartHelper.width / 2),
-      top: -(ChartHelper.spacing_v - 2),
-      data: {
-        orientation: "vertical",
-        len: (ChartHelper.spacing_v - 2)
-      }
-    });
+    if (inAncestors.father || inAncestors.mother ||
+        inAncestors.siblings1 ||
+        inAncestors.siblings2) {
+      lines.push({
+        left: left + (ChartHelper.width / 2),
+        top: -(ChartHelper.spacing_v - 2),
+        data: {
+          orientation: "vertical",
+          len: (ChartHelper.spacing_v - 2)
+        }
+      });
+    }
     
     data = data.concat(ped_data);
     lines = lines.concat(ped_lines);
