@@ -259,21 +259,21 @@ exports.testPositionsFullTree = function(test) {
   };
   var returnObject = ChartHelper.renderAncestors(ancestors, 3);
   var data = returnObject.data;
-  test.equal(getElementByRef(data, 3).left - getElementByRef(data, 2).left, ChartHelper.width + ChartHelper.spacing, 
+  test.equal(getElementByRef(data, 3).left - getElementByRef(data, 2).left, ChartHelper.width + ChartHelper.spacing,
     "Position of parents of father of mother is not correct");
-  test.equal(getElementByRef(data, 6).left - getElementByRef(data, 5).left, ChartHelper.width + ChartHelper.spacing, 
+  test.equal(getElementByRef(data, 6).left - getElementByRef(data, 5).left, ChartHelper.width + ChartHelper.spacing,
     "Position of parents of mother of mother is not correct");
-  test.equal(getElementByRef(data, 10).left - getElementByRef(data, 9).left, ChartHelper.width + ChartHelper.spacing, 
+  test.equal(getElementByRef(data, 10).left - getElementByRef(data, 9).left, ChartHelper.width + ChartHelper.spacing,
     "Position of parents of father of father is not correct");
-  test.equal(getElementByRef(data, 13).left - getElementByRef(data, 12).left, ChartHelper.width + ChartHelper.spacing, 
+  test.equal(getElementByRef(data, 13).left - getElementByRef(data, 12).left, ChartHelper.width + ChartHelper.spacing,
     "Position of parents of mother of father is not correct");
 
-  test.equal(getElementByRef(data, 4).left - getElementByRef(data, 1).left, ChartHelper.width * 2 + ChartHelper.spacing * 2, 
+  test.equal(getElementByRef(data, 4).left - getElementByRef(data, 1).left, ChartHelper.width * 2 + ChartHelper.spacing * 2,
     "Position of parents of mother is not correct");
-  test.equal(getElementByRef(data, 11).left - getElementByRef(data, 8).left, ChartHelper.width * 2 + ChartHelper.spacing * 2, 
+  test.equal(getElementByRef(data, 11).left - getElementByRef(data, 8).left, ChartHelper.width * 2 + ChartHelper.spacing * 2,
     "Position of parents of mother is not correct");
 
-  test.equal(getElementByRef(data, 0).left - getElementByRef(data, 7).left, ChartHelper.width * 4 + ChartHelper.spacing * 4, 
+  test.equal(getElementByRef(data, 0).left - getElementByRef(data, 7).left, ChartHelper.width * 4 + ChartHelper.spacing * 4,
     "Position of parents is not correct");
 
 
