@@ -104,7 +104,7 @@ exports.testSiblings = function(test) {
     }
   };
   var tree = json2Tree(jsonObject, 1);
-  test.equal(tree.siblings1[0].data.name, 'brother', "brother of element #1 not found");
+  test.equal(tree.siblings2[0].data.name, 'brother', "brother of element #1 not found");
   test.done();
 };
 

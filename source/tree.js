@@ -22,9 +22,10 @@ function json2Tree(jsonObject, ref) {
   var myTree = {
     father: getFather(jsonObject, element),
     mother: getMother(jsonObject, element),
-    siblings1: getSiblings1(jsonObject, element),
-    father_siblings: getSiblings1(jsonObject, getFatherElement(jsonObject, element)),
-    mother_siblings: getSiblings1(jsonObject, getMotherElement(jsonObject, element)),
+    siblings1: getSiblings(jsonObject, element, element.data.birth, -1),
+    siblings2: getSiblings(jsonObject, element, element.data.birth, 1),
+    father_siblings: getSiblings(jsonObject, getFatherElement(jsonObject, element)),
+    mother_siblings: getSiblings(jsonObject, getMotherElement(jsonObject, element)),
     pedigree: {
       data: element.data,
       spouses: getSpouses(jsonObject, element)
@@ -83,22 +84,45 @@ function getMotherElement(jsonObject, element) {
   return motherElement;
 }
 // returns for now all siblings of the element with spouse(s) and children
-function getSiblings1(jsonObject, element) {
+function getSiblings(jsonObject, element, compareDate, compareResult) {
   var mother = getMotherElement(jsonObject, element);
   var father = getFatherElement(jsonObject, element);
 
   var siblings = [];
   var child;
+  var addPerson = true;
+  var notComparable = false;
+  var actualCompareResult;
 
   if (mother.relations && father.relations) {
     mother.relations.forEach(function (rel, rel_ind, relations) {
       if (rel.type === 'child') {
         if (rel.spouse === father.data.ref && rel.ref !== element.data.ref) {
           child = jsonObject.elements[rel.ref];
-          siblings.push({
-            data: child.data,
-            spouses: getSpouses(jsonObject, child)
-          });
+          addPerson = true;
+          notComparable = false;
+
+          if (compareResult) {
+            actualCompareResult = compareGenDate(compareDate, child.data.birth);
+
+            if (actualCompareResult === null) {
+              notComparable = true;
+            } else if (actualCompareResult === compareResult * -1) {
+              addPerson = false;
+            }
+
+            // add non-comparable persons to right-hand side
+            if (compareResult === 1 && notComparable) {
+              addPerson = true;
+              notComparable = false;
+            }
+          }
+          if (addPerson && !notComparable) {
+            siblings.push({
+              data: child.data,
+              spouses: getSpouses(jsonObject, child)
+            });
+          }
         }
       }
     });
