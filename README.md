@@ -1,4 +1,4 @@
-geneajs
+geneajs [![Build Status](https://travis-ci.org/djfun/geneajs.png?branch=master)](https://travis-ci.org/djfun/geneajs)
 ================
 
 A collection of javascripts to work with genealogical data and render a family tree/kinship chart.

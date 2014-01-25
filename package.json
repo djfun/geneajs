@@ -1,0 +1,23 @@
+{
+  "name": "geneajs",
+  "version": "0.0.1",
+  "description": "A collection of javascripts to work with genealogical data and render a family tree/kinship chart.",
+  "main": "source",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "nodeunit test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/djfun/geneajs.git"
+  },
+  "author": "Martin Kaistra",
+  "license": "LGPL 3 or later",
+  "bugs": {
+    "url": "https://github.com/djfun/geneajs/issues"
+  },
+  "homepage": "https://github.com/djfun/geneajs"
+}
