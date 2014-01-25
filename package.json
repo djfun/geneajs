@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/djfun/geneajs/issues"
   },
-  "homepage": "https://github.com/djfun/geneajs"
+  "homepage": "https://github.com/djfun/geneajs",
+  "devDependencies": {
+    "nodeunit": ">= 0.7.4"
+  }
 }
