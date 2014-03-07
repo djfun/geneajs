@@ -2,7 +2,7 @@
   "name": "geneajs",
   "version": "0.0.1",
   "description": "A collection of javascripts to work with genealogical data and render a family tree/kinship chart.",
-  "main": "source",
+  "main": "source/main.js",
   "directories": {
     "example": "examples",
     "test": "test"
@@ -22,5 +22,8 @@
   "homepage": "https://github.com/djfun/geneajs",
   "devDependencies": {
     "nodeunit": ">= 0.7.4"
+  },
+  "dependencies": {
+    "handlebars": "~2.0.0-alpha.2"
   }
 }

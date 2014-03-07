@@ -531,3 +531,5 @@ var myTree = {
     }
   }
 };
+
+module.exports = myTree;
