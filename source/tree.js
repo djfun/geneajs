@@ -17,76 +17,85 @@
 // transforms a javascript object with elements and relations into the tree structure
 // needed by chart.js
 function json2Tree(jsonObject, ref) {
-  var element = jsonObject.elements[ref];
+  return datastore2Tree(function(ref) {
+    return jsonObject.elements[ref];
+  }, ref);
+}
+
+function datastore2Tree(getCallback, ref) {
+  var element = getCallback.call(this, ref);
   
   var myTree = {
-    father: getFather(jsonObject, element),
-    mother: getMother(jsonObject, element),
-    siblings1: getSiblings(jsonObject, element, element.data.birth, -1),
-    siblings2: getSiblings(jsonObject, element, element.data.birth, 1),
-    father_siblings: getSiblings(jsonObject, getFatherElement(jsonObject, element)),
-    mother_siblings: getSiblings(jsonObject, getMotherElement(jsonObject, element)),
+    father: getFather(getCallback, element),
+    mother: getMother(getCallback, element),
+    siblings1: getSiblings(getCallback, element, element.data.birth, -1),
+    siblings2: getSiblings(getCallback, element, element.data.birth, 1),
+    father_siblings: getSiblings(getCallback, getFatherElement(getCallback, element)),
+    mother_siblings: getSiblings(getCallback, getMotherElement(getCallback, element)),
     pedigree: {
       data: element.data,
-      spouses: getSpouses(jsonObject, element)
+      spouses: getSpouses(getCallback, element)
     }
   };
   return myTree;
 }
+
+
+
 // returns father and his ancestors
-function getFather(jsonObject, element) {
-  var father = getFatherElement(jsonObject, element);
+function getFather(getCallback, element) {
+  var father = getFatherElement(getCallback, element);
   if (father) {
     return {
       data: father.data,
-      father: getFather(jsonObject, father),
-      mother: getMother(jsonObject, father)
+      father: getFather(getCallback, father),
+      mother: getMother(getCallback, father)
     };
   } else {
     return false;
   }
 }
 // returns mother and her ancestors
-function getMother(jsonObject, element) {
-  var mother = getMotherElement(jsonObject, element);
+function getMother(getCallback, element) {
+  var mother = getMotherElement(getCallback, element);
   if (mother) {
     return {
       data: mother.data,
-      father: getFather(jsonObject, mother),
-      mother: getMother(jsonObject, mother)
+      father: getFather(getCallback, mother),
+      mother: getMother(getCallback, mother)
     };
   } else {
     return false;
   }
 }
 // returns father of the element
-function getFatherElement(jsonObject, element) {
+function getFatherElement(getCallback, element) {
   var fatherElement = false;
   if (element.relations) {
     element.relations.forEach(function(rel, rel_ind, relations) {
       if (rel.type === 'father') {
-        fatherElement = jsonObject.elements[rel.ref];
+        fatherElement = getCallback.call(this, rel.ref);
       }
     });
   }
   return fatherElement;
 }
 // returns mother of the element
-function getMotherElement(jsonObject, element) {
+function getMotherElement(getCallback, element) {
   var motherElement = false;
   if (element.relations) {
     element.relations.forEach(function(rel, rel_ind, relations) {
       if (rel.type === 'mother') {
-        motherElement = jsonObject.elements[rel.ref];
+        motherElement = getCallback.call(this, rel.ref);
       }
     });
   }
   return motherElement;
 }
 // returns for now all siblings of the element with spouse(s) and children
-function getSiblings(jsonObject, element, compareDate, compareResult) {
-  var mother = getMotherElement(jsonObject, element);
-  var father = getFatherElement(jsonObject, element);
+function getSiblings(getCallback, element, compareDate, compareResult) {
+  var mother = getMotherElement(getCallback, element);
+  var father = getFatherElement(getCallback, element);
 
   var siblings = [];
   var child;
@@ -98,7 +107,7 @@ function getSiblings(jsonObject, element, compareDate, compareResult) {
     mother.relations.forEach(function (rel, rel_ind, relations) {
       if (rel.type === 'child') {
         if (rel.spouse === father.data.ref && rel.ref !== element.data.ref) {
-          child = jsonObject.elements[rel.ref];
+          child = getCallback.call(this, rel.ref);
           addPerson = true;
           notComparable = false;
 
@@ -120,7 +129,7 @@ function getSiblings(jsonObject, element, compareDate, compareResult) {
           if (addPerson && !notComparable) {
             siblings.push({
               data: child.data,
-              spouses: getSpouses(jsonObject, child)
+              spouses: getSpouses(getCallback, child)
             });
           }
         }
@@ -134,7 +143,7 @@ function getSiblings(jsonObject, element, compareDate, compareResult) {
   }
 }
 // returns spouses of the element with their children
-function getSpouses(jsonObject, element) {
+function getSpouses(getCallback, element) {
   var spouses = [], spouse;
   var spouse_refs = [];
   var children_refs_for_spouse = {};
@@ -160,12 +169,12 @@ function getSpouses(jsonObject, element) {
     for (var ref_ind in spouse_refs) {
       ref = spouse_refs[ref_ind];
       children = [];
-      spouse = jsonObject.elements[ref];
+      spouse = getCallback.call(this, ref);
       children_refs_for_spouse[ref].forEach(function(c_ref, c_ref_ind, c_refs) {
-        child = jsonObject.elements[c_ref];
+        child = getCallback.call(this, c_ref);
         children.push({
           data: child.data,
-          spouses: getSpouses(jsonObject, child)
+          spouses: getSpouses(getCallback, child)
         });
       });
       spouses.push({
@@ -183,4 +192,5 @@ function getSpouses(jsonObject, element) {
 
 if (typeof exports !== 'undefined') {
   exports.json2Tree = json2Tree;
+  exports.datastore2Tree = datastore2Tree;
 }

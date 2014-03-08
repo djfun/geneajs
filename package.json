@@ -24,6 +24,7 @@
     "nodeunit": ">= 0.7.4"
   },
   "dependencies": {
-    "handlebars": "~2.0.0-alpha.2"
+    "handlebars": "~2.0.0-alpha.2",
+    "node-uuid": "~1.4.1"
   }
 }
