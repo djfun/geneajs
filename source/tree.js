@@ -73,7 +73,7 @@ function getFatherElement(getCallback, element) {
   var fatherElement = false;
   if (element.relations) {
     element.relations.forEach(function(rel, rel_ind, relations) {
-      if (rel.type === 'father') {
+      if (rel.type === 'childParent' && rel.subtype == 'father') {
         fatherElement = getCallback.call(this, rel.ref);
       }
     });
@@ -85,7 +85,7 @@ function getMotherElement(getCallback, element) {
   var motherElement = false;
   if (element.relations) {
     element.relations.forEach(function(rel, rel_ind, relations) {
-      if (rel.type === 'mother') {
+      if (rel.type === 'childParent' && rel.subtype == 'mother') {
         motherElement = getCallback.call(this, rel.ref);
       }
     });
@@ -105,7 +105,7 @@ function getSiblings(getCallback, element, compareDate, compareResult) {
 
   if (mother.relations && father.relations) {
     mother.relations.forEach(function (rel, rel_ind, relations) {
-      if (rel.type === 'child') {
+      if (rel.type === 'parentChild') {
         if (rel.spouse === father.data.ref && rel.ref !== element.data.ref) {
           child = getCallback.call(this, rel.ref);
           addPerson = true;
@@ -158,7 +158,7 @@ function getSpouses(getCallback, element) {
           children_refs_for_spouse[rel.ref] = [];
         }
       }
-      if (rel.type === 'child') {
+      if (rel.type === 'parentChild') {
         if (!children_refs_for_spouse[rel.spouse]) {
           children_refs_for_spouse[rel.spouse] = [];
         }

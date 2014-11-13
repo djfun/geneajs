@@ -79,14 +79,13 @@ var Datastore = {
   deleteElement: function(getCallback, updateCallback, deleteCallback, ref) {
     getCallback.call(this, ref, function(data) {
       data.relations.forEach(function(relation, rel_ind, relations) {
-        if (relation.type == 'child') {
-          Datastore._deleteRelation(getCallback, updateCallback, relation.ref, relation.spouse, 'child');
-          Datastore._deleteRelation(getCallback, updatecallback, ref, relation.ref, 'father');
-          Datastore._deleteRelation(getCallback, updatecallback, ref, relation.ref, 'mother');
-          Datastore._deleteRelation(getCallback, updatecallback, relation.spouse, relation.ref, 'father');
-          Datastore._deleteRelation(getCallback, updatecallback, relation.spouse, relation.ref, 'mother');
-        } else if (relation.type == 'father') {
-          
+        if (relation.type == 'childParent') {
+          Datastore._deleteRelation(getCallback, updatecallback, relation.ref, ref, 'parentChild');
+          Datastore._deleteRelation(getCallback, updatecallback, relation.spouse, ref, 'parentChild');
+        } else if (relation.type == 'parentChild') {
+          Datastore._deleteRelation(getCallback, updatecallback, relation.ref, ref, 'childParent');
+        } else {
+          Datastore._deleteRelation(getCallback, updatecallback, relation.ref, ref, relation.type);
         }
       });
       deleteCallback.call(this, ref);
@@ -95,18 +94,20 @@ var Datastore = {
   addParentChildRelation: function(getCallback, updateCallback, father, mother, child) {
     getCallback.call(this, child, function(data) {
       data.relations.push({
-        type: 'father',
+        type: 'childParent',
+        subtype: 'father',
         ref: father
       });
       data.relations.push({
-        type: 'mother',
+        type: 'childParent',
+        subtype: 'mother',
         ref: mother
       });
       updateCallback.call(this, child, data);
     });
     getCallback.call(this, father, function(data) {
       data.relations.push({
-        type: 'child',
+        type: 'parentChild',
         ref: child,
         spouse: mother
       });
@@ -114,7 +115,7 @@ var Datastore = {
     });
     getCallback.call(this, mother, function(data) {
       data.relations.push({
-        type: 'child',
+        type: 'parentChild',
         ref: child,
         spouse: father
       });
@@ -138,24 +139,24 @@ var Datastore = {
     });
   },
   deleteParentChildRelation: function(getCallback, updateCallback, father, mother, child) {
-    Datastore._deleteRelation.call(this, getCallback, updateCallback, father, child, 'child');
-    Datastore._deleteRelation.call(this, getCallback, updateCallback, mother, child, 'child');
-    Datastore._deleteRelation.call(this, getCallback, updateCallback, child, father, 'father');
-    Datastore._deleteRelation.call(this, getCallback, updateCallback, child, mother, 'mother');
+    Datastore._deleteRelation.call(this, getCallback, updateCallback, father, child, 'childParent');
+    Datastore._deleteRelation.call(this, getCallback, updateCallback, mother, child, 'childParent');
+    Datastore._deleteRelation.call(this, getCallback, updateCallback, child, father, 'parentChild');
+    Datastore._deleteRelation.call(this, getCallback, updateCallback, child, mother, 'parentChild');
   },
   deleteSimpleRelation: function(getCallback, updateCallback, ref1, ref2, type) {
     Datastore._deleteRelation.call(this, getCallback, updateCallback, ref1, ref2, type);
     Datastore._deleteRelation.call(this, getCallback, updateCallback, ref2, ref1, type);
   },
   _deleteRelation: function(getCallback, updateCallback, ref1, ref2, type) {
-    getCallback.call(this, ref2, function(data) {
+    getCallback.call(this, ref1, function(data) {
       data.relations.forEach(function(relation, rel_ind, relations) {
         if (relation.type === type &&
-          relation.ref === ref1) {
+          relation.ref === ref2) {
           delete data.relations[rel_ind];
         }
       });
-      updateCallback.call(this, ref2, data);
+      updateCallback.call(this, ref1, data);
     });
   },
   getRelationsByType: function(getCallback, ref, type, successCallback) {

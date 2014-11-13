@@ -27,7 +27,7 @@ exports.testFatherAndMother = function(test) {
           'ref': 1
         },
         'relations': [
-          {type: 'father', ref: 2},
+          {type: 'childParent', subtype: 'father', ref: 2},
           {type: 'something-undefined', ref: 1}
         ]
       },
@@ -37,8 +37,8 @@ exports.testFatherAndMother = function(test) {
           'ref': 2
         },
         'relations': [
-          {type: 'father', ref: 3},
-          {type: 'mother', ref: 4}
+          {type: 'childParent', subtype: 'father', ref: 3},
+          {type: 'childParent', subtype: 'mother', ref: 4}
         ]
       },
       3: {
@@ -71,8 +71,8 @@ exports.testSiblings = function(test) {
           'ref': 1
         },
         'relations': [
-          {type: 'father', ref: 2},
-          {type: 'mother', ref: 3}
+          {type: 'childParent', subtype: 'father', ref: 2},
+          {type: 'childParent', subtype: 'mother', ref: 3}
         ]
       },
       2: {
@@ -81,8 +81,8 @@ exports.testSiblings = function(test) {
           'ref': 2
         },
         'relations': [
-          {type: 'child', ref: 1, spouse: 3},
-          {type: 'child', ref: 4, spouse: 3}
+          {type: 'parentChild', ref: 1, spouse: 3},
+          {type: 'parentChild', ref: 4, spouse: 3}
         ]
       },
       3: {
@@ -91,8 +91,8 @@ exports.testSiblings = function(test) {
           'ref': 3
         },
         'relations': [
-          {type: 'child', ref: 1, spouse: 2},
-          {type: 'child', ref: 4, spouse: 2}
+          {type: 'parentChild', ref: 1, spouse: 2},
+          {type: 'parentChild', ref: 4, spouse: 2}
         ]
       },
       4: {
@@ -118,7 +118,7 @@ exports.testSpouses = function(test) {
         },
         'relations': [
           {type: 'spouse', ref: 2},
-          {type: 'child', ref: 3, spouse: 2}
+          {type: 'parentChild', ref: 3, spouse: 2}
         ]
       },
       2: {
@@ -128,7 +128,7 @@ exports.testSpouses = function(test) {
         },
         'relations': [
           {type: 'spouse', ref: 1},
-          {type: 'child', ref: 3, spouse: 1}
+          {type: 'parentChild', ref: 3, spouse: 1}
         ]
       },
       3: {
@@ -137,8 +137,8 @@ exports.testSpouses = function(test) {
           'ref': 3
         },
         'relations': [
-          {type: 'mother', ref: 1},
-          {type: 'father', ref: 2}
+          {type: 'childParent', subtype: 'mother', ref: 1},
+          {type: 'childParent', subtype: 'father', ref: 2}
         ]
       }
     }
@@ -158,8 +158,8 @@ exports.testFatherSiblings = function(test) {
           'ref': 1
         },
         'relations': [
-          {type: 'father', ref: 2},
-          {type: 'mother', ref: 3}
+          {type: 'childParent', subtype: 'father', ref: 2},
+          {type: 'childParent', subtype: 'mother', ref: 3}
         ]
       },
       2: {
@@ -168,9 +168,9 @@ exports.testFatherSiblings = function(test) {
           'ref': 2
         },
         'relations': [
-          {type: 'child', ref: 1, spouse: 3},
-          {type: 'father', ref: 5},
-          {type: 'mother', ref: 6}
+          {type: 'parentChild', ref: 1, spouse: 3},
+          {type: 'childParent', subtype: 'father', ref: 5},
+          {type: 'childParent', subtype: 'mother', ref: 6}
         ]
       },
       3: {
@@ -179,8 +179,8 @@ exports.testFatherSiblings = function(test) {
           'ref': 3
         },
         'relations': [
-          {type: 'child', ref: 1, spouse: 2},
-          {type: 'child', ref: 4, spouse: 2}
+          {type: 'parentChild', ref: 1, spouse: 2},
+          {type: 'parentChild', ref: 4, spouse: 2}
         ]
       },
       4: {
@@ -189,8 +189,8 @@ exports.testFatherSiblings = function(test) {
           'ref': 4
         },
         'relations': [
-          {type: 'father', ref: 5},
-          {type: 'mother', ref: 6}
+          {type: 'childParent', subtype: 'father', ref: 5},
+          {type: 'childParent', subtype: 'mother', ref: 6}
         ]
       },
       5: {
@@ -199,8 +199,8 @@ exports.testFatherSiblings = function(test) {
           'ref': 5
         },
         'relations': [
-          {type: 'child', ref: 2, spouse: 6},
-          {type: 'child', ref: 4, spouse: 6},
+          {type: 'parentChild', ref: 2, spouse: 6},
+          {type: 'parentChild', ref: 4, spouse: 6},
           {type: 'spouse', ref: 6}
         ]
       },
@@ -210,8 +210,8 @@ exports.testFatherSiblings = function(test) {
           'ref': 6
         },
         'relations': [
-          {type: 'child', ref: 2, spouse: 5},
-          {type: 'child', ref: 4, spouse: 5},
+          {type: 'parentChild', ref: 2, spouse: 5},
+          {type: 'parentChild', ref: 4, spouse: 5},
           {type: 'spouse', ref: 5}
         ]
       }
