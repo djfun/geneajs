@@ -21,10 +21,10 @@
   },
   "homepage": "https://github.com/djfun/geneajs",
   "devDependencies": {
-    "nodeunit": ">= 0.7.4"
+    "nodeunit": "latest"
   },
   "dependencies": {
-    "handlebars": "~2.0.0-alpha.2",
+    "handlebars": "~2.0.0",
     "node-uuid": "~1.4.1"
   }
 }
