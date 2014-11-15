@@ -167,20 +167,22 @@ function getSpouses(getCallback, element) {
     });
 
     for (var ref_ind in spouse_refs) {
-      ref = spouse_refs[ref_ind];
-      children = [];
-      spouse = getCallback.call(this, ref);
-      children_refs_for_spouse[ref].forEach(function(c_ref, c_ref_ind, c_refs) {
-        child = getCallback.call(this, c_ref);
-        children.push({
-          data: child.data,
-          spouses: getSpouses(getCallback, child)
+      if (spouse_refs.hasOwnProperty(ref_ind)) {
+        ref = spouse_refs[ref_ind];
+        children = [];
+        spouse = getCallback.call(this, ref);
+        children_refs_for_spouse[ref].forEach(function(c_ref, c_ref_ind, c_refs) {
+          child = getCallback.call(this, c_ref);
+          children.push({
+            data: child.data,
+            spouses: getSpouses(getCallback, child)
+          });
         });
-      });
-      spouses.push({
-        data: spouse.data,
-        children: children
-      });
+        spouses.push({
+          data: spouse.data,
+          children: children
+        });
+      }
     }
   }
   if (spouses.length === 0) {
