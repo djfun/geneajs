@@ -149,6 +149,7 @@ function getSpouses(getCallback, element) {
   var children_refs_for_spouse = {};
   var children, child;
   var ref;
+  var additional_data;
 
   if (element.relations) {
     element.relations.forEach(function(rel, rel_ind, relations) {
@@ -182,6 +183,8 @@ function getSpouses(getCallback, element) {
           data: spouse.data,
           children: children
         });
+        additional_data = hasOtherSpouses(spouse, element.data.ref) || hasParents(spouse);
+        spouses[spouses.length - 1].data['_additional_data'] = additional_data;
       }
     }
   }
@@ -191,6 +194,32 @@ function getSpouses(getCallback, element) {
     return spouses;
   }
 }
+
+function hasOtherSpouses(element, spouse_ref) {
+  var b = false;
+  if (element.relations) {
+    element.relations.forEach(function(rel, rel_ind, relations) {
+      if (rel.type === 'spouse' && rel.ref !== spouse_ref) {
+        b = true;
+      }
+    });
+  }
+  return b;
+}
+
+function hasParents(element) {
+  var b = false;
+  if (element.relations) {
+    element.relations.forEach(function(rel, rel_ind, relations) {
+      if (rel.type === 'childParent') {
+          b = true;
+      }
+    });
+  }
+  return b;
+}
+
+
 
 if (typeof exports !== 'undefined') {
   exports.json2Tree = json2Tree;
